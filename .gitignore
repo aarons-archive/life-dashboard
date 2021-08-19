@@ -1,0 +1,11 @@
+*.pyc
+*.ini
+*.log*
+
+
+.idea/
+venv/
+node_modules/
+static/
+
+config.py
