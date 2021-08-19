@@ -22,7 +22,7 @@ class Dashboard(aiohttp.web.Application):
 
         self.db: Optional[asyncpg.Pool] = None
         self.redis: Optional[aioredis.client.StrictRedis] = None
-        self.ipc: ipc.Client = ipc.Client(secret_key="aaaaaaaa")
+        self.ipc: ipc.Client = ipc.Client(secret_key=config.SECRET_KEY)
 
         self.on_startup.append(self.start)
 
