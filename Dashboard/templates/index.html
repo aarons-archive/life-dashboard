@@ -47,11 +47,11 @@
                 <div class="collapse navbar-collapse fw-bold" id="NavBar">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link link-light underline" href="/features">Features</a>
+                            <a class="nav-link link-light underline" href="{{ support_link }}">Support server</a>
                         </li>
                     </ul>
                     <form class="d-flex ms-2">
-                        <button class="btn btn-light fw-bold" type="button">Login</button>
+                        <button class="btn btn-light fw-bold" type="submit" formaction="/login">Login</button>
                     </form>
                 </div>
 
@@ -63,13 +63,13 @@
             <div class="container p-5 text-center">
                 <div class="row">
                     <div class="col-12">
-                        <img class="img-fluid pb-5" src="{{ static('/images/whitelogo500x261.png') }}" alt="Life Bot Logo">
+                        <img class="img-fluid pb-5" src="{{ avatar }}" alt="logo">
                     </div>
                     <div class="col-12">
-                        <a class="btn btn-lg btn-light fw-bold" role="button" href="{{ invite }}">Invite me</a>
+                        <a class="btn btn-lg btn-light fw-bold" role="button" href="{{ invite_link }}">Invite me</a>
                     </div>
                     <div class="col-12">
-                        <h3 class="pt-5 m-0">Serving {{ guilds }} servers and {{ users }} users</h3>
+                        <h3 class="pt-5 m-0">{{ username }}</h3>
                     </div>
                 </div>
             </div>

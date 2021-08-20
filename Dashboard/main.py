@@ -79,8 +79,6 @@ if __name__ == "__main__":
             asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     except ImportError:
         uvloop = None
-        if sys.platform == 'win32':
-            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
     else:
         del uvloop
 
@@ -88,7 +86,7 @@ if __name__ == "__main__":
 
         app = app.Dashboard()
 
-        endpoints = ["index"]
+        endpoints = ["index", "login", "api.callback"]
         for endpoint in [importlib.import_module(f"endpoints.{endpoint}") for endpoint in endpoints]:
             endpoint.setup(app=app)
 
@@ -104,11 +102,6 @@ if __name__ == "__main__":
 
         aiohttp.web.run_app(
             app=app,
-            host=config.WEB_ADDRESS,
-            port=config.WEB_PORT
-        )
-
-        aiohttp_session.setup(
-            app=app,
-            storage=aiohttp_session.redis_storage.RedisStorage(app.redis)
+            host=config.HOST,
+            port=config.PORT
         )
