@@ -1,5 +1,3 @@
-import time
-
 import aiohttp.web
 import aiohttp_session
 
@@ -37,11 +35,15 @@ async def discord_callback(request: aiohttp.web.Request) -> aiohttp.web.Response
             return aiohttp.web.json_response({'error': "something went wrong while authenticating with discord."}, status=400)
 
         data = await response.json()
-        data["created_at"] = time.time()
 
     session["token"] = data
 
-    raise aiohttp.web.HTTPFound("/")
+    if not (url := session.get("login_redirect")):
+        url = "/"
+    else:
+        del session["login_redirect"]
+
+    raise aiohttp.web.HTTPFound(url)
 
 
 def setup(app: aiohttp.web.Application):

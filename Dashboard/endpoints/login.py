@@ -8,9 +8,9 @@ from core import config
 
 async def login(request: aiohttp.web.Request) -> aiohttp.web.HTTPFound:
 
-    session = await aiohttp_session.new_session(request)
-    state = secrets.token_urlsafe(20)
+    session = await aiohttp_session.get_session(request)
 
+    state = secrets.token_urlsafe(20)
     session["state"] = state
 
     return aiohttp.web.HTTPFound(
@@ -25,6 +25,8 @@ async def login(request: aiohttp.web.Request) -> aiohttp.web.HTTPFound:
 
 def setup(app: aiohttp.web.Application):
 
-    app.add_routes([
-        aiohttp.web.get(r"/login", login),
-    ])
+    app.add_routes(
+        [
+            aiohttp.web.get(r"/login", login),
+        ]
+    )

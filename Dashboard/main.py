@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
         app = app.Dashboard()
 
-        endpoints = ["index", "login", "api.callback"]
+        endpoints = ["index", "login", "logout", "servers", "api.callback"]
         for endpoint in [importlib.import_module(f"endpoints.{endpoint}") for endpoint in endpoints]:
             endpoint.setup(app=app)
 

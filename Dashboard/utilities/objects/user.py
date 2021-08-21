@@ -33,7 +33,7 @@ class User:
 
     @property
     def id(self) -> int:
-        return self._id
+        return int(self._id)
 
     @property
     def username(self) -> str:
@@ -81,7 +81,7 @@ class User:
         return {
             "id": self.id,
             "username": self.username,
-            "avatar": utils.avatar(person=self),
+            "avatar": utils.avatar(self),
             "discriminator": self.discriminator,
         }
 

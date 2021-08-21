@@ -119,3 +119,27 @@ class Dashboard(aiohttp.web.Application):
                 user = await self.fetch_user(session)
 
         return user
+
+    async def fetch_guilds(self, session: aiohttp_session.Session) -> Optional[list[objects.Guild]]:
+
+        if not (token := await self.get_token(session)):
+            return None
+
+        data = await self.http.request(http.Route("GET", "/users/@me/guilds", token=token.access_token))
+        guilds = [objects.Guild(data=guild_data) for guild_data in data]
+
+        session["guilds"] = [guild.to_json() for guild in guilds]
+
+        return guilds
+
+    async def get_guilds(self, session: aiohttp_session.Session) -> Optional[list[objects.Guild]]:
+
+        if not (data := session.get("guilds")):
+            guilds = await self.fetch_guilds(session)
+
+        else:
+            guilds = [objects.Guild(data=json.loads(guild_data)) for guild_data in data]
+            if any(guild.is_expired() for guild in guilds):
+                guilds = await self.fetch_guilds(session)
+
+        return guilds
