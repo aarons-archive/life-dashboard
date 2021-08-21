@@ -29,30 +29,46 @@
         <!-- JS and CSS -->
         <link rel="stylesheet" href="{{ static('/css/app.css') }}"/>
         <script defer type="text/javascript" src="{{ static('/js/app.js') }}"></script>
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,600,700,800" rel="stylesheet">
     </head>
 
     <body>
 
-        <nav class="navbar navbar-dark navbar-expand-md">
+        <nav class="navbar navbar-expand-md py-md-3">
             <div class="container">
 
-                <a class="navbar-brand" href="/">
-                    <img class="img-fluid align-text-top" src="{{ static('/images/whitelogo50x26.png') }}" alt="logo">
+                <a class="navbar-brand me-4" href="/">
+                    <img class="align-text-top d-inline-block" src="{{ static('/images/whitelogo50x26.png') }}" alt="logo">
                 </a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#NavBar" aria-controls="NavBar" aria-expanded="false" aria-label="Toggle navigation">
+                {% if not user %}
+                    <form class="me-auto">
+                        <button class="btn btn-light fw-bold" type="submit" formaction="/login">Login</button>
+                    </form>
+                {% else %}
+                    <div class="dropdown me-auto">
+                        <a class="nav-link link-light dropdown-toggle fw-bold px-0" href="#" id="NavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown">
+                            <img class="rounded-circle mx-2" src="{{ user['avatar'] }}" alt="logo" style="width: 30px">
+                            {{ user["username"] }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="NavbarDropdownMenuLink">
+                            <li><a class="dropdown-item" href="#">Action</a></li>
+                            <li><a class="dropdown-item" href="#">Another action</a></li>
+                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#NavBar">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <div class="collapse navbar-collapse fw-bold" id="NavBar">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item">
-                            <a class="nav-link link-light underline" href="{{ support_link }}">Support server</a>
-                        </li>
+                <div class="collapse navbar-collapse flex-grow-0" id="NavBar">
+                    <ul class="navbar-nav fw-bold">
+                        <li><a class="nav-link link-light" href="{{ support_link }}">Support</a></li>
+                        <li><a class="nav-link link-light" href="{{ github_link }}">Source</a></li>
+                        <li><a class="nav-link link-light" href="{{ invite_link }}">Invite</a></li>
                     </ul>
-                    <form class="d-flex ms-2">
-                        <button class="btn btn-light fw-bold" type="submit" formaction="/login">Login</button>
-                    </form>
                 </div>
 
             </div>
@@ -63,7 +79,7 @@
             <div class="container p-5 text-center">
                 <div class="row">
                     <div class="col-12">
-                        <img class="img-fluid pb-5" src="{{ avatar }}" alt="logo">
+                        <img class="img-fluid pb-5" src="{{ static('/images/whitelogo500x261.png') }}" alt="logo">
                     </div>
                     <div class="col-12">
                         <a class="btn btn-lg btn-light fw-bold" role="button" href="{{ invite_link }}">Invite me</a>
