@@ -74,33 +74,49 @@
         </nav>
 
         <div class="container">
-            <div class="container p-5 text-center">
 
-                <div class="row">
-                    {% if mutual_guilds %}
-                        <h2 class="col-12 py-3">Click an icon to go to that servers dashboard</h2>
+            {% if mutual_guilds %}
+                <div class="container">
+
+                    <h2>Life is in these servers</h2>
+
+                    <div class="row">
                         {% for guild in mutual_guilds %}
-                            <div class="col-4 col-sm-3 col-md-3 col-lg-2 col-xl-2">
-                                <a href="/dashboard/{{ guild.id }}"><img class="img-fluid rounded-circle" src="{{ guild.icon or static('/images/no_image100x100.png') }}" alt="{{ guild.name }}" style="width: 128px;"></a>
-                                <p class="text-break pt-2">{{ guild.name }}</p>
+                            <div class="col-4 col-sm-3 col-md-3 col-lg-2 col-xl-2 p-2">
+                                <div class="card shadow p-2">
+                                    <img class="card-img-top img-fluid rounded-3" src="{{ guild.icon or static('/images/no_image100x100.png') }}" alt="server icon">
+                                    <div class="card-body p-0 pt-2">
+                                        {{ guild.name }}
+                                    </div>
+                                </div>
                             </div>
                         {% endfor %}
-                    {% endif %}
-                </div>
+                    </div>
 
-                <div class="row">
-                    {% if non_mutual_guilds %}
-                        <h2 class="col-12 py-3">Life is not in these servers</h2>
+                </div>
+            {% endif %}
+
+            {% if non_mutual_guilds %}
+                <div class="container">
+
+                    <h2>Life is not in these servers</h2>
+
+                    <div class="row">
                         {% for guild in non_mutual_guilds %}
-                            <div class="col-4 col-sm-3 col-md-3 col-lg-2 col-xl-2">
-                                <img class="img-fluid rounded-circle" src="{{ guild.icon or static('/images/no_image100x100.png') }}" alt="{{ guild.name }}" style="width: 128px;">
-                                <p class="text-break pt-2">{{ guild.name }}</p>
+                            <div class="col-4 col-sm-3 col-md-3 col-lg-2 col-xl-2 p-2">
+                                <div class="card shadow p-2">
+                                    <img class="card-img-top img-fluid rounded-3" src="{{ guild.icon or static('/images/no_image100x100.png') }}" alt="server icon">
+                                    <div class="card-body p-0 pt-2">
+                                        {{ guild.name }}
+                                    </div>
+                                </div>
                             </div>
                         {% endfor %}
-                    {% endif %}
-                </div>
+                    </div>
 
-            </div>
+                </div>
+            {% endif %}
+
         </div>
 
     </body>

@@ -2,7 +2,6 @@
 *.ini
 *.log*
 
-
 .idea/
 venv/
 node_modules/
