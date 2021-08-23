@@ -25,8 +25,8 @@ async def servers(request: aiohttp.web.Request) -> Optional[dict[str, Any] | aio
     non_mutual_guilds = [guild.to_dict() for guild in guilds if guild.id not in mutual_guild_ids]
 
     return {
-        "user": user.to_dict(),
-        "mutual_guilds": mutual_guilds,
+        "user":              user.to_dict(),
+        "mutual_guilds":     mutual_guilds,
         "non_mutual_guilds": non_mutual_guilds,
     }
 

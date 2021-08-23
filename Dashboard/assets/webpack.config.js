@@ -57,11 +57,12 @@ module.exports = (env, options) => {
             }),
             new CopyWebpackPlugin({
                 patterns: [
-                    {from:  'resources/',
-                        to: '../',
+                    {
+                        from: 'resources/',
+                        to:   '../',
                     },
                 ],
             }),
-        ]
+        ],
     };
 };

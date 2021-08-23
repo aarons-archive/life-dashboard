@@ -8,7 +8,6 @@ import sys
 
 import aiohttp.web
 import aiohttp_jinja2
-import aiohttp_session.redis_storage
 import jinja2
 import setproctitle
 
@@ -25,9 +24,9 @@ BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = [f"\u001b[{30 + i}m" for
 @contextlib.contextmanager
 def logger():
     loggers: dict[str, logging.Logger] = {
-        "dashboard":    logging.getLogger("dashboard"),
-        "utilities":        logging.getLogger("utilities"),
-        "aiohttp": logging.getLogger("aiohttp"),
+        "dashboard": logging.getLogger("dashboard"),
+        "utilities": logging.getLogger("utilities"),
+        "aiohttp":   logging.getLogger("aiohttp"),
 
     }
 

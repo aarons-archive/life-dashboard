@@ -79,9 +79,9 @@ class User:
     def to_dict(self) -> dict[str, Any]:
 
         return {
-            "id": self.id,
-            "username": self.username,
-            "avatar": utils.avatar(self),
+            "id":            self.id,
+            "username":      self.username,
+            "avatar":        utils.avatar(self),
             "discriminator": self.discriminator,
         }
 

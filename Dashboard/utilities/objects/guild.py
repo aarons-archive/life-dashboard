@@ -65,12 +65,12 @@ class Guild:
     def to_dict(self) -> dict[str, Any]:
 
         return {
-            "id": self.id,
-            "name": self.name,
-            "icon": utils.icon(self),
-            "owner": self.owner,
+            "id":          self.id,
+            "name":        self.name,
+            "icon":        utils.icon(self),
+            "owner":       self.owner,
             "permissions": dict(self.permissions),
-            "features": self.features
+            "features":    self.features
         }
 
     def to_json(self) -> str:
