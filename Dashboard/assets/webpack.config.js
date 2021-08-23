@@ -15,18 +15,18 @@ module.exports = (env, options) => {
         optimization: {
             minimizer: [
                 new TerserPlugin(),
-                new CssMinimizerPlugin()
-            ]
+                new CssMinimizerPlugin(),
+            ],
         },
 
         entry: {
-            'app': glob.sync('./vendor/**/*.js').concat(['./js/app.js'])
+            'app': glob.sync('./vendor/**/*.js').concat(['./js/app.js']),
         },
 
         output: {
-            path: path.resolve(__dirname, '../static/js'),
-            filename: '[name].js',
-            publicPath: '/js/'
+            path:       path.resolve(__dirname, '../static/js'),
+            filename:   '[name].js',
+            publicPath: '/js/',
         },
 
         devtool: devMode ? 'eval-cheap-module-source-map' : undefined,
@@ -34,32 +34,34 @@ module.exports = (env, options) => {
         module: {
             rules: [
                 {
-                    test: /\.m?js$/,
+                    test:    /\.m?js$/,
                     exclude: /node_modules/,
-                    use: {
-                        loader: 'babel-loader'
-                    }
+                    use:     {
+                        loader: 'babel-loader',
+                    },
                 },
                 {
                     test: /\.s?css$/i,
-                    use: [
+                    use:  [
                         MiniCssExtractPlugin.loader,
                         'css-loader',
-                        'sass-loader'
-                    ]
-                }
-            ]
+                        'sass-loader',
+                    ],
+                },
+            ],
         },
 
         plugins: [
             new MiniCssExtractPlugin({
-                filename: '../css/app.css'
+                filename: '../css/app.css',
             }),
             new CopyWebpackPlugin({
                 patterns: [
-                    { from: 'resources/', to: '../' }
-                ]
-            })
+                    {from:  'resources/',
+                        to: '../',
+                    },
+                ],
+            }),
         ]
     };
 };
