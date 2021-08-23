@@ -87,7 +87,7 @@ if __name__ == "__main__":
 
         endpoints = ["index", "login", "logout", "servers", "profile", "api.callback"]
         for endpoint in [importlib.import_module(f"endpoints.{endpoint}") for endpoint in endpoints]:
-            endpoint.setup(app=app)
+            endpoint.setup(app=app)  # type: ignore
 
         app.add_routes(
             [aiohttp.web.static("/static", os.path.abspath(os.path.join(os.path.dirname(__file__), "static")), show_index=True, follow_symlinks=True)]

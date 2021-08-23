@@ -14,7 +14,7 @@ class Token:
         self._scopes: list[str] = data.get("scope", "").split(" ")
         self._token_type: str = data["token_type"]
 
-        self._created_at: int = data.get("created_at")
+        self._created_at: float = data.get("created_at", time.time())
 
     def __repr__(self) -> str:
         return "<dashboard.Token>"
@@ -41,7 +41,7 @@ class Token:
 
     @property
     def created_at(self) -> float:
-        return self._created_at or time.time()
+        return self._created_at
 
     #
 

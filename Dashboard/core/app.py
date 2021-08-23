@@ -4,9 +4,10 @@ from typing import Optional
 
 import aiohttp
 import aiohttp.web
-import aiohttp_session.redis_storage
+import aiohttp_session
 import aioredis
 import asyncpg
+from aiohttp_session import redis_storage
 from discord.ext import ipc
 
 from core import config
@@ -24,7 +25,7 @@ class Dashboard(aiohttp.web.Application):
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
         self.db: Optional[asyncpg.Pool] = None
-        self.redis: Optional[aioredis.client.StrictRedis] = None
+        self.redis: Optional[aioredis.Redis] = None
         self.ipc: ipc.Client = ipc.Client(secret_key=config.SECRET_KEY)
 
         self.http = http.HTTPClient(session=self.session)
@@ -56,7 +57,7 @@ class Dashboard(aiohttp.web.Application):
 
         aiohttp_session.setup(
             app=self,
-            storage=aiohttp_session.redis_storage.RedisStorage(self.redis)
+            storage=redis_storage.RedisStorage(redis)
         )
 
     async def get_token(self, session: aiohttp_session.Session) -> Optional[objects.Token]:
@@ -89,7 +90,7 @@ class Dashboard(aiohttp.web.Application):
                 data = await response.json()
 
             if error := data.get("error"):
-                raise Exception  # TODO: Raise a better exception
+                raise Exception(error)  # TODO: Raise a better exception
 
             token = objects.Token(data)
             session["token"] = token.to_json()

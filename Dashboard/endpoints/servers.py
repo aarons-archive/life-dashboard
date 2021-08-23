@@ -7,7 +7,7 @@ import aiohttp_session
 from core.app import Dashboard
 
 
-@aiohttp_jinja2.template("servers.html")
+@aiohttp_jinja2.template("servers.html")  # type: ignore
 async def servers(request: aiohttp.web.Request) -> Optional[dict[str, Any] | aiohttp.web.Response]:
 
     app: Dashboard = request.app
@@ -31,10 +31,5 @@ async def servers(request: aiohttp.web.Request) -> Optional[dict[str, Any] | aio
     }
 
 
-def setup(app: aiohttp.web.Application):
-
-    app.add_routes(
-        [
-            aiohttp.web.get(r"/servers", servers),
-        ]
-    )
+def setup(app: aiohttp.web.Application) -> None:
+    app.add_routes([aiohttp.web.get(r"/servers", servers)])  # type: ignore

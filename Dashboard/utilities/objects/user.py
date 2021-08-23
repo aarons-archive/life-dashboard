@@ -24,9 +24,9 @@ class User:
         self._accent_color: int = data["accent_color"]
         self._locale: str = data["locale"]
         self._mfa_enabled: bool = data["mfa_enabled"]
-        self._premium_type: int = data.get("premium_type")
+        self._premium_type: int = data.get("premium_type", 0)
 
-        self._created_at: int = data.get("created_at")
+        self._created_at: float = data.get("created_at", time.time())
 
     def __repr__(self) -> str:
         return "<dashboard.User>"
@@ -69,7 +69,7 @@ class User:
 
     @property
     def created_at(self) -> float:
-        return self._created_at or time.time()
+        return self._created_at
 
     #
 

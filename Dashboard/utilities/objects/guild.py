@@ -20,7 +20,7 @@ class Guild:
         self._permissions: str = data["permissions"]
         self._features: list[str] = data["features"]
 
-        self._created_at: int = data.get("created_at")
+        self._created_at: float = data.get("created_at", time.time())
 
     def __repr__(self) -> str:
         return "<dashboard.Guild>"
@@ -55,7 +55,7 @@ class Guild:
 
     @property
     def created_at(self) -> float:
-        return self._created_at or time.time()
+        return self._created_at
 
     #
 

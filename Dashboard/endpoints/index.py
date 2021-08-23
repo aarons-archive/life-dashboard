@@ -7,8 +7,8 @@ import aiohttp_session
 from core.app import Dashboard
 
 
-@aiohttp_jinja2.template("index.html")
-async def index(request: aiohttp.web.Request) -> Optional[dict[str, Any]]:
+@aiohttp_jinja2.template("index.html")  # type: ignore
+async def index(request: aiohttp.web.Request) -> Optional[dict[str, Any] | aiohttp.web.Response]:
 
     app: Dashboard = request.app
 
@@ -23,10 +23,5 @@ async def index(request: aiohttp.web.Request) -> Optional[dict[str, Any]]:
     }
 
 
-def setup(app: aiohttp.web.Application):
-
-    app.add_routes(
-        [
-            aiohttp.web.get(r"/", index),
-        ]
-    )
+def setup(app: aiohttp.web.Application) -> None:
+    app.add_routes([aiohttp.web.get(r"/", index)])  # type: ignore
