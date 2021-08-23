@@ -26,7 +26,7 @@ class Dashboard(aiohttp.web.Application):
 
         self.db: Optional[asyncpg.Pool] = None
         self.redis: Optional[aioredis.Redis] = None
-        self.ipc: ipc.Client = ipc.Client(secret_key=config.SECRET_KEY)
+        self.ipc: ipc.Client = ipc.Client(secret_key=config.SECRET_KEY, multicast_port=config.MULTICAST_PORT)
 
         self.http = http.HTTPClient(session=self.session)
 
