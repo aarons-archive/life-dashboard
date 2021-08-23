@@ -37,13 +37,7 @@ async def discord_callback(request: aiohttp.web.Request) -> aiohttp.web.Response
         data = await response.json()
 
     session["token"] = data
-
-    if not (url := session.get("login_redirect")):
-        url = "/"
-    else:
-        del session["login_redirect"]
-
-    raise aiohttp.web.HTTPFound(url)
+    return aiohttp.web.HTTPFound("/")
 
 
 def setup(app: aiohttp.web.Application):

@@ -6,14 +6,14 @@ import aiohttp_session
 from core import config
 
 
-async def login(request: aiohttp.web.Request) -> None:
+async def login(request: aiohttp.web.Request) -> aiohttp.web.Response:
 
-    session = await aiohttp_session.get_session(request)
+    session = await aiohttp_session.new_session(request)
 
     state = secrets.token_urlsafe(20)
     session["state"] = state
 
-    raise aiohttp.web.HTTPFound(
+    return aiohttp.web.HTTPFound(
         f"https://discord.com/api/oauth2/authorize"
         f"?client_id={config.CLIENT_ID}"
         f"&response_type=code"

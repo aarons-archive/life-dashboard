@@ -4,10 +4,9 @@ from typing import Optional
 
 import aiohttp
 import aiohttp.web
-import aiohttp_session
+import aiohttp_session.redis_storage
 import aioredis
 import asyncpg
-from aiohttp_session import redis_storage
 from discord.ext import ipc
 
 from core import config
@@ -57,7 +56,7 @@ class Dashboard(aiohttp.web.Application):
 
         aiohttp_session.setup(
             app=self,
-            storage=redis_storage.RedisStorage(redis)
+            storage=aiohttp_session.redis_storage.RedisStorage(self.redis)
         )
 
     async def get_token(self, session: aiohttp_session.Session) -> Optional[objects.Token]:

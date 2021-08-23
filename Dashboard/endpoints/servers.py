@@ -14,8 +14,7 @@ async def servers(request: aiohttp.web.Request) -> Optional[dict[str, Any] | aio
     session = await aiohttp_session.get_session(request)
 
     if not (user := await app.get_user(session)):
-        session["login_redirect"] = "/servers"
-        raise aiohttp.web.HTTPFound("/login")
+        return aiohttp.web.HTTPFound("/login")
 
     guilds = await app.get_guilds(session)
 
