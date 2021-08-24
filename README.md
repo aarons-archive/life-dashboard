@@ -1,3 +1,3 @@
 Life-dashboard
 
-ill add stuff here late i guess 
+ill add stuff here late I guess 

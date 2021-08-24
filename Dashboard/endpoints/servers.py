@@ -10,7 +10,7 @@ from core.app import Dashboard
 @aiohttp_jinja2.template("servers.html")  # type: ignore
 async def servers(request: aiohttp.web.Request) -> Optional[dict[str, Any] | aiohttp.web.Response]:
 
-    app: Dashboard = request.app
+    app: Dashboard = request.app  # type: ignore
     session = await aiohttp_session.get_session(request)
 
     if not (user := await app.get_user(session)):

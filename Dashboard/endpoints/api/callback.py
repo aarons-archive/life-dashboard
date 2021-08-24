@@ -10,11 +10,11 @@ async def discord_callback(request: aiohttp.web.Request) -> aiohttp.web.Response
     session = await aiohttp_session.get_session(request)
 
     if session.get("state") != request.query["state"]:
-        return aiohttp.web.json_response({'error': "'state' query parameters do not match."}, status=400)
+        return aiohttp.web.json_response({'error': "state query parameter does not match."}, status=400)
 
     del session["state"]
 
-    app: Dashboard = request.app
+    app: Dashboard = request.app  # type: ignore
 
     async with app.session.post(
             url=f"https://discord.com/api/oauth2/token",
@@ -41,8 +41,4 @@ async def discord_callback(request: aiohttp.web.Request) -> aiohttp.web.Response
 
 
 def setup(app: aiohttp.web.Application):
-    app.add_routes(
-        [
-            aiohttp.web.get(r"/api/discord-callback", discord_callback),
-        ]
-    )
+    app.add_routes([aiohttp.web.get(r"/api/discord-callback", discord_callback)])
