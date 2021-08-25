@@ -1,10 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
 
-</body>
+    <head>
+        <!-- Page config -->
+        <title>{% block title %}Life dashboard{% endblock title %}</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="index, follow">
+        <meta name="author" content="Axelancerr">
+        <meta name="description" content="{% block description %}TODO: Fill this in{% endblock description %}">
+        <!-- Tags -->
+        <meta property="og:title" content="{{ self.title() }}">
+        <meta property="og:type" content="website">
+        <meta property="og:image" content="{% block og_image %}{{ static('/images/logo128x128.png') }}{% endblock og_image %}">
+        <meta id="ogURL" property="og:url" content="">
+        <meta property="og:description" content="{{ self.description() }}">
+        <meta property="og:locale" content="en_GB"/>
+        <meta property="og:site_name" content="Life">
+        <!-- CSS/Fonts/Misc -->
+        <link rel="stylesheet" href="{{ static('/css/app.css') }}"/>
+        <link rel="stylesheet" href="https://use.typekit.net/joc7wli.css">
+        {% block head_links %}{% endblock head_links %}
+    </head>
+
+    <body>
+
+        <nav class="navbar navbar-dark navbar-expand-md p-3">
+            <div class="container g-0 g-md-3">
+
+                <a class="navbar-brand p-0" href="/">
+                    <img class="img-fluid align-text-top d-inline-block" src="{{ static('/images/whitelogo50x26.png') }}" alt="logo">
+                </a>
+
+                <div class="btn-group">
+
+                    {% if user %}
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-light p-0 mx-2" href="#" id="NavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown">
+                                <img class="img-fluid rounded-circle me-2" src="{{ user['avatar'] }}" alt="logo" style="width: 40px">
+                                {{ user["username"] }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-3">
+                                <li><a class="dropdown-item" href="/">Home</a></li>
+                                <li><a class="dropdown-item" href="/profile">Profile</a></li>
+                                <li><a class="dropdown-item" href="/servers">Servers</a></li>
+                                <li><hr class="dropdown-divider my-1"></li>
+                                <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <form>
+                            <button class="btn btn-light" type="submit" formaction="/login">Login</button>
+                        </form>
+                    {% endif %}
+
+                    <button class="btn navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#NavBar">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#DEE2E6" class="bi bi-list" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"></path>
+                        </svg>
+                    </button>
+
+                </div>
+
+                <div class="collapse navbar-collapse mt-2" id="NavBar">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="{{ github_link }}">Github</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ invite_link }}">Invite</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ support_link }}">Help</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+
+        {% block inner_content %}{% endblock inner_content %}
+
+        <script>
+            document.querySelector('#ogURL').setAttribute('content', location.href);
+        </script>
+
+        {% block js_links %}
+        <script type="text/javascript" src="{{ static('/js/app.js') }}"></script>
+        {% endblock js_links %}
+
+    </body>
+
 </html>
