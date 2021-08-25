@@ -1,6 +1,6 @@
 import json
 import logging
-from typing import Optional
+from typing import Any, Optional
 
 import aiohttp
 import aiohttp.web
@@ -26,11 +26,13 @@ class Dashboard(aiohttp.web.Application):
 
         self.db: Optional[asyncpg.Pool] = None
         self.redis: Optional[aioredis.Redis] = None
-        self.ipc: ipc.Client = ipc.Client(secret_key=config.SECRET_KEY, multicast_port=config.MULTICAST_PORT)
 
-        self.http = http.HTTPClient(session=self.session)
+        self.ipc: ipc.Client = ipc.Client(secret_key=config.SECRET_KEY, multicast_port=config.MULTICAST_PORT)
+        self.http: http.HTTPClient = http.HTTPClient(session=self.session)
 
         self.on_startup.append(self.start)
+
+        self.links: Optional[dict[str, Any]] = None
 
     async def start(self, _) -> None:
 
@@ -59,6 +61,8 @@ class Dashboard(aiohttp.web.Application):
             app=self,
             storage=redis_storage.RedisStorage(redis)
         )
+
+        self.links = await self.ipc.request("links")
 
     async def get_token(self, session: aiohttp_session.Session) -> Optional[objects.Token]:
 

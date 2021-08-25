@@ -14,11 +14,13 @@ async def index(request: aiohttp.web.Request) -> Optional[dict[str, Any]]:
 
     session = await aiohttp_session.get_session(request)
 
-    data = await app.ipc.request("basic_information")
+    stats = await app.ipc.request("stats")
+
     user = await app.get_user(session)
 
     return {
-        **data,
+        **app.links,
+        **stats,
         "user": user.to_dict() if user else None
     }
 
