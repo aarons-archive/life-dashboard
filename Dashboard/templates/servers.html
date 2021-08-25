@@ -2,6 +2,28 @@
 {% block title %}Life - Servers{% endblock title %}
 {% block description %}Server list{% endblock description %}
 
+{% macro guild_card(guild, is_mutual) %}
+
+    <div class="col-4 col-sm-3 col-md-3 col-lg-2 col-xl-2 p-2">
+        <div class="card shadow p-2">
+            <img class="card-img-top img-fluid rounded-3" src="{{ guild.icon or static('/images/no_image100x100.png') }}" alt="server icon">
+            <div class="card-body p-0 pt-2">
+                {{ guild.name }}
+            </div>
+            {% if is_mutual %}
+                <a class="stretched-link" href="/servers/{{ guild.id }}"></a>
+            {% else %}
+                {% if guild.permissions.manage_guild or guild.permissions.adminstrator %}
+                    <a class="stretched-link" href="/api/invite?guild_id={{ guild.id }}"></a>
+                {% else %}
+                    <a class="stretched-link no-permission-toast"></a>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+{% endmacro %}
+
 {% block inner_content %}
 
 <div class="container">
@@ -16,15 +38,7 @@
 
             <div class="row masonry">
                 {% for guild in mutual_guilds %}
-                    <div class="col-4 col-sm-3 col-md-3 col-lg-2 col-xl-2 p-2">
-                        <div class="card shadow p-2">
-                            <img class="card-img-top img-fluid rounded-3" src="{{ guild.icon or static('/images/no_image100x100.png') }}" alt="server icon">
-                            <div class="card-body p-0 pt-2">
-                                {{ guild.name }}
-                            </div>
-                            <a href="/servers/{{ guild.id }}" class="stretched-link"></a>
-                        </div>
-                    </div>
+                    {{ guild_card(guild, True) }}
                 {% endfor %}
             </div>
 
@@ -41,19 +55,7 @@
 
             <div class="row masonry">
                 {% for guild in non_mutual_guilds %}
-                    <div class="col-4 col-sm-3 col-md-3 col-lg-2 col-xl-2 p-2">
-                        <div class="card shadow p-2">
-                            <img class="card-img-top img-fluid rounded-3" src="{{ guild.icon or static('/images/no_image100x100.png') }}" alt="server icon">
-                            <div class="card-body p-0 pt-2">
-                                {{ guild.name }}
-                            </div>
-                            {% if guild["permissions"]["manage_guild"] or guild["permissions"]["adminstrator"] %}
-                                <a href="/api/invite?guild_id={{ guild.id }}" class="stretched-link"></a>
-                            {% else %}
-                                <a class="stretched-link no-permission-toast"></a>
-                            {% endif %}
-                        </div>
-                    </div>
+                    {{ guild_card(guild, False) }}
                 {% endfor %}
             </div>
 
