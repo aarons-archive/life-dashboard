@@ -7,10 +7,11 @@ import aiohttp.web
 import aiohttp_session
 import aioredis
 import asyncpg
+import discord
 from aiohttp_session import redis_storage
 from discord.ext import ipc
 
-from core import config
+from core import config, values
 from utilities import http, objects
 
 
@@ -32,7 +33,13 @@ class Dashboard(aiohttp.web.Application):
 
         self.on_startup.append(self.start)
 
-        self.links: Optional[dict[str, Any]] = None
+        self.links: dict[str, Any] = {
+            "invite_link": discord.utils.oauth_url(
+                client_id=config.CLIENT_ID,
+                permissions=values.PERMISSIONS,
+                scopes=["bot", "applications.commands"],
+            )
+        }
 
     async def start(self, _) -> None:
 
@@ -64,6 +71,8 @@ class Dashboard(aiohttp.web.Application):
 
         self.links = await self.ipc.request("links")
 
+    #
+
     async def get_token(self, session: aiohttp_session.Session) -> Optional[objects.Token]:
 
         if not (data := session.get("token")):
@@ -78,7 +87,7 @@ class Dashboard(aiohttp.web.Application):
                     data={
                         "client_secret": config.CLIENT_SECRET,
                         "client_id":     config.CLIENT_ID,
-                        "redirect_uri":  config.LOGIN_CALLBACK,
+                        "redirect_uri":  config.LOGIN_REDIRECT,
                         "refresh_token": token.refresh_token,
                         "grant_type":    "refresh_token",
                         "scope":         "identify guilds",
@@ -100,6 +109,8 @@ class Dashboard(aiohttp.web.Application):
             session["token"] = token.to_json()
 
         return token
+
+    #
 
     async def fetch_user(self, session: aiohttp_session.Session) -> Optional[objects.User]:
 
@@ -124,6 +135,8 @@ class Dashboard(aiohttp.web.Application):
                 user = await self.fetch_user(session)
 
         return user
+
+    #
 
     async def fetch_guilds(self, session: aiohttp_session.Session) -> Optional[list[objects.Guild]]:
 

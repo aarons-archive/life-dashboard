@@ -14,7 +14,7 @@
                 <a class="stretched-link" href="/servers/{{ guild.id }}"></a>
             {% else %}
                 {% if guild.permissions.manage_guild or guild.permissions.adminstrator %}
-                    <a class="stretched-link" href="/api/invite?guild_id={{ guild.id }}"></a>
+                    <a class="stretched-link" href="/api/discord/invite/{{ guild.id }}"></a>
                 {% else %}
                     <a class="stretched-link no-permission-toast"></a>
                 {% endif %}

@@ -18,7 +18,7 @@ async def login(request: aiohttp.web.Request) -> aiohttp.web.Response:
         f"?client_id={config.CLIENT_ID}"
         f"&response_type=code"
         f"&scope=identify+guilds"
-        f"&redirect_uri={config.LOGIN_CALLBACK}"
+        f"&redirect_uri={config.LOGIN_REDIRECT}"
         f"&state={state}"
     )
 
