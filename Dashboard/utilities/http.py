@@ -28,7 +28,7 @@ import asyncio
 import datetime
 import json
 import weakref
-from typing import Any, ClassVar, Literal, Optional, Type, TypeVar
+from typing import Any, ClassVar, Literal, TypeVar
 from urllib.parse import quote
 
 import aiohttp

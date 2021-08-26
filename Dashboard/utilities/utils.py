@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal, Optional, TYPE_CHECKING
+from typing import Literal, TYPE_CHECKING
 
 
 if TYPE_CHECKING:
