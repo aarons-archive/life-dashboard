@@ -7,7 +7,6 @@ import aiohttp.web
 import aiohttp_session
 import aioredis
 import asyncpg
-import discord
 from aiohttp_session import redis_storage
 from discord.ext import ipc
 
@@ -34,11 +33,7 @@ class Dashboard(aiohttp.web.Application):
         self.on_startup.append(self.start)
 
         self.links: dict[str, Any] = {
-            "invite_link": discord.utils.oauth_url(
-                client_id=config.CLIENT_ID,
-                permissions=values.PERMISSIONS,
-                scopes=["bot", "applications.commands"],
-            )
+            "invite_link": values.INVITE_LINK
         }
 
     async def start(self, _) -> None:

@@ -1,5 +1,7 @@
 import discord
 
+from core import config
+
 
 ZWSP = "\u200b"
 NL = "\n"
@@ -12,4 +14,10 @@ PERMISSIONS = discord.Permissions(
     read_message_history=True,
     add_reactions=True,
     external_emojis=True,
+)
+
+INVITE_LINK = discord.utils.oauth_url(
+    client_id=config.CLIENT_ID,
+    permissions=PERMISSIONS,
+    scopes=["bot", "applications.commands"],
 )

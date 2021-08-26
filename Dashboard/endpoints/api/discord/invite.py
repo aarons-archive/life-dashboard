@@ -10,10 +10,7 @@ async def invite(request: aiohttp.web.Request) -> aiohttp.web.Response:
         return aiohttp.web.HTTPFound(config.redirect_uri(f"/servers/{guild_id}"))
 
     elif request.query.get("error"):
-        return aiohttp.web.json_response(
-            data={"error": "you cancelled the bot invite prompt"},
-            status=400
-        )  # TODO: Better error here.
+        return aiohttp.web.json_response(data={"error": "you cancelled the bot invite prompt"}, status=400)  # TODO: Better error here.
 
     class GoAndFuckYourselfDpy:
 
