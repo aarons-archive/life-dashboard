@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 def avatar(
     person: objects.User,
     *,
-    format: Optional[Literal["webp", "jpeg", "jpg", "png", "gif"]] = None,
+    format: Literal["webp", "jpeg", "jpg", "png", "gif"] | None = None,
     size: int = 512
 ) -> str:
 
@@ -20,8 +20,8 @@ def avatar(
 def icon(
     guild: objects.Guild,
     *,
-    format: Optional[Literal["webp", "jpeg", "jpg", "png", "gif"]] = None,
+    format: Literal["webp", "jpeg", "jpg", "png", "gif"] | None = None,
     size: int = 512
-) -> Optional[str]:
+) -> str | None:
 
     return str(guild.icon.replace(format=format or ("gif" if guild.icon.is_animated() else "png"), size=size)) if guild.icon else None

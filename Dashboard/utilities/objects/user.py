@@ -15,11 +15,11 @@ class User:
 
         self._id: int = data["id"]
         self._username: str = data["username"]
-        self._avatar: Optional[str] = data["avatar"]
+        self._avatar: str | None = data["avatar"]
         self._discriminator: str = data["discriminator"]
         self._public_flags: int = data["public_flags"]
         self._flags: int = data["flags"]
-        self._banner: Optional[str] = data["banner"]
+        self._banner: str | None = data["banner"]
         self._banner_color: str = data["banner_color"]
         self._accent_color: int = data["accent_color"]
         self._locale: str = data["locale"]
@@ -56,7 +56,7 @@ class User:
         return discord.PublicUserFlags._from_value(self._public_flags)
 
     @property
-    def banner(self) -> Optional[discord.Asset]:
+    def banner(self) -> discord.Asset | None:
 
         if self._banner is None:
             return None

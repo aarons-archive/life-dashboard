@@ -8,7 +8,7 @@ from core.app import Dashboard
 
 
 @aiohttp_jinja2.template("index.html")  # type: ignore
-async def index(request: aiohttp.web.Request) -> Optional[dict[str, Any]]:
+async def index(request: aiohttp.web.Request) -> dict[str, Any] | None:
 
     session = await aiohttp_session.get_session(request)
 

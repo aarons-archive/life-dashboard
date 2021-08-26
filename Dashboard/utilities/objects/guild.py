@@ -15,7 +15,7 @@ class Guild:
 
         self._id: int = data["id"]
         self._name: str = data["name"]
-        self._icon: Optional[str] = data["icon"]
+        self._icon: str | None = data["icon"]
         self._owner: bool = data["owner"]
         self._permissions: str = data["permissions"]
         self._features: list[str] = data["features"]
@@ -34,7 +34,7 @@ class Guild:
         return self._name
 
     @property
-    def icon(self) -> Optional[discord.Asset]:
+    def icon(self) -> discord.Asset | None:
 
         if self._icon is None:
             return None

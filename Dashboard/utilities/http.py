@@ -75,8 +75,8 @@ class Route:
 
         self.url: str = url
 
-        self.channel_id: Optional[Snowflake] = parameters.get("channel_id")
-        self.guild_id: Optional[Snowflake] = parameters.get("guild_id")
+        self.channel_id: Snowflake | None = parameters.get("channel_id")
+        self.guild_id: Snowflake | None = parameters.get("guild_id")
 
     @property
     def bucket(self) -> str:
@@ -101,8 +101,8 @@ class MaybeUnlock:
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BE]],
-        exc: Optional[BE],
+        exc_type: type[BE] | None,
+        exc: BE | None,
         traceback: Any,
     ) -> None:
 
@@ -166,7 +166,7 @@ class HTTPClient:
                     remaining = response.headers.get("X-Ratelimit-Remaining")
                     if remaining == "0" and response.status != 429:
 
-                        reset_after: Optional[str] = response.headers.get("X-Ratelimit-Reset-After")
+                        reset_after: str | None = response.headers.get("X-Ratelimit-Reset-After")
 
                         if not reset_after:
                             utc = datetime.timezone.utc

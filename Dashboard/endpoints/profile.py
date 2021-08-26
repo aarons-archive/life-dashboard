@@ -5,7 +5,7 @@ import aiohttp_jinja2
 
 
 @aiohttp_jinja2.template("profile.html")  # type: ignore
-async def profile(_: aiohttp.web.Request) -> Optional[dict[str, Any] | aiohttp.web.Response]:
+async def profile(_: aiohttp.web.Request) -> dict[str, Any] | aiohttp.web.Response | None:
     return None
 
 

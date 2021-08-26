@@ -54,7 +54,7 @@ class DiscordException(Exception):
 
 class HTTPException(DiscordException):
 
-    def __init__(self, response: aiohttp.ClientResponse, message: Optional[str | dict[str, Any]]):
+    def __init__(self, response: aiohttp.ClientResponse, message: str | dict[str, Any] | None):
 
         self.response = response
         self.status: int = response.status

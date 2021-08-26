@@ -24,8 +24,8 @@ class Dashboard(aiohttp.web.Application):
 
         self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
-        self.db: Optional[asyncpg.Pool] = None
-        self.redis: Optional[aioredis.Redis] = None
+        self.db: asyncpg.Pool | None = None
+        self.redis: aioredis.Redis | None = None
 
         self.ipc: ipc.Client = ipc.Client(secret_key=config.SECRET_KEY, multicast_port=config.MULTICAST_PORT)
         self.http: http.HTTPClient = http.HTTPClient(session=self.session)
@@ -68,7 +68,7 @@ class Dashboard(aiohttp.web.Application):
 
     #
 
-    async def get_token(self, session: aiohttp_session.Session) -> Optional[objects.Token]:
+    async def get_token(self, session: aiohttp_session.Session) -> objects.Token | None:
 
         if not (data := session.get("token")):
             return None
@@ -107,7 +107,7 @@ class Dashboard(aiohttp.web.Application):
 
     #
 
-    async def fetch_user(self, session: aiohttp_session.Session) -> Optional[objects.User]:
+    async def fetch_user(self, session: aiohttp_session.Session) -> objects.User | None:
 
         if not (token := await self.get_token(session)):
             return None
@@ -119,7 +119,7 @@ class Dashboard(aiohttp.web.Application):
 
         return user
 
-    async def get_user(self, session: aiohttp_session.Session) -> Optional[objects.User]:
+    async def get_user(self, session: aiohttp_session.Session) -> objects.User | None:
 
         if not (data := session.get("user")):
             user = await self.fetch_user(session)
@@ -133,7 +133,7 @@ class Dashboard(aiohttp.web.Application):
 
     #
 
-    async def fetch_guilds(self, session: aiohttp_session.Session) -> Optional[list[objects.Guild]]:
+    async def fetch_guilds(self, session: aiohttp_session.Session) -> list[objects.Guild] | None:
 
         if not (token := await self.get_token(session)):
             return None
@@ -145,7 +145,7 @@ class Dashboard(aiohttp.web.Application):
 
         return guilds
 
-    async def get_guilds(self, session: aiohttp_session.Session) -> Optional[list[objects.Guild]]:
+    async def get_guilds(self, session: aiohttp_session.Session) -> list[objects.Guild] | None:
 
         if not (data := session.get("guilds")):
             guilds = await self.fetch_guilds(session)
