@@ -3,9 +3,15 @@ import time
 from typing import Any
 
 import discord
-import discord.enums
+import pendulum
+from discord.enums import try_enum
 
-from utilities import utils
+from utilities import enums, utils
+
+
+__all__ = (
+    "User",
+)
 
 
 class User:
@@ -13,47 +19,60 @@ class User:
     def __init__(self, data: dict[str, Any]) -> None:
         self.data = data
 
-        self._id: int = data["id"]
+        self._id: int = int(data["id"])
         self._username: str = data["username"]
-        self._avatar: str | None = data["avatar"]
         self._discriminator: str = data["discriminator"]
-        self._public_flags: int = data["public_flags"]
-        self._flags: int = data["flags"]
-        self._banner: str | None = data["banner"]
-        self._banner_color: str = data["banner_color"]
-        self._accent_color: int = data["accent_color"]
-        self._locale: str = data["locale"]
-        self._mfa_enabled: bool = data["mfa_enabled"]
-        self._premium_type: int = data.get("premium_type", 0)
+        self._avatar: str | None = data["avatar"]
 
-        self._created_at: float = data.get("created_at", time.time())
+        self._banner: str | None = data.get("banner")
+        self._accent_color: int | None = data.get("accent_color")
+
+        self._bot: bool = data.get("bot", False)
+        self._system: bool = data.get("system", False)
+        self._mfa_enabled: bool = data.get("mfa_enabled", False)
+
+        self._premium_type: int = data.get("premium_type", 0)
+        self._public_flags: int = data.get("public_flags", 0)
+        self._locale: str = data.get("locale", "en")
+
+        self._fetched_at: float = data.get("fetched_at", time.time())
 
     def __repr__(self) -> str:
-        return "<dashboard.User>"
+        return f"<User id={self.id} username='{self.username}' discriminator={self.discriminator} bot={self.bot}>"
+
+    #
 
     @property
     def id(self) -> int:
-        return int(self._id)
+        return self._id
+
+    @property
+    def created_at(self) -> pendulum.DateTime:
+        return utils.convert_datetime(discord.utils.snowflake_time(self.id))
 
     @property
     def username(self) -> str:
         return self._username
 
     @property
-    def avatar(self) -> discord.Asset:
-
-        if self._avatar is None:
-            return discord.Asset._from_default_avatar(None, int(self.discriminator) % len(discord.enums.DefaultAvatar))
-        else:
-            return discord.Asset._from_avatar(None, self.id, self._avatar)
-
-    @property
     def discriminator(self) -> str:
         return self._discriminator
 
     @property
-    def public_flags(self) -> discord.PublicUserFlags:
-        return discord.PublicUserFlags._from_value(self._public_flags)
+    def default_avatar(self) -> discord.Asset:
+        return discord.Asset._from_default_avatar(state=None, index=int(self.discriminator) % len(discord.enums.DefaultAvatar))
+
+    @property
+    def avatar(self) -> discord.Asset | None:
+
+        if self._avatar is None:
+            return None
+
+        return discord.Asset._from_avatar(None, self.id, self._avatar)
+
+    @property
+    def display_avatar(self) -> discord.Asset:
+        return self.avatar or self.default_avatar
 
     @property
     def banner(self) -> discord.Asset | None:
@@ -64,30 +83,70 @@ class User:
         return discord.Asset._from_user_banner(None, self.id, self._banner)
 
     @property
-    def accent_color(self) -> discord.Colour:
+    def accent_colour(self) -> discord.Colour | None:
+
+        if self._accent_color is None:
+            return None
+
         return discord.Colour(self._accent_color)
 
     @property
-    def created_at(self) -> float:
-        return self._created_at
+    def bot(self) -> bool:
+        return self._bot
+
+    @property
+    def system(self) -> bool:
+        return self._system
+
+    @property
+    def mfa_enabled(self) -> bool:
+        return self._mfa_enabled
+
+    @property
+    def premium_type(self) -> int:
+        return self._premium_type
+
+    @property
+    def public_flags(self) -> discord.PublicUserFlags:
+        return discord.PublicUserFlags._from_value(self._public_flags)
+
+    @property
+    def locale(self) -> str:
+        return self._locale
 
     #
 
+    @property
+    def fetched_at(self) -> float:
+        return self._fetched_at
+
     def is_expired(self) -> bool:
-        return (time.time() - self.created_at) > 20
+        return (time.time() - self.fetched_at) > 20
+
+    #
 
     def to_dict(self) -> dict[str, Any]:
 
         return {
             "id":            self.id,
+            "created_at":    utils.format_datetime(self.created_at),
+            "created_ago":   utils.format_difference(self.created_at),
             "username":      self.username,
-            "avatar":        utils.avatar(self),
             "discriminator": self.discriminator,
+            "avatar":        utils.avatar(self),
+            "banner":        utils.banner(self),
+            "accent_colour": self.accent_colour,
+            "bot":           self.bot,
+            "system":        self.system,
+            "mfa_enabled":   self.mfa_enabled,
+            "premium_type":  self.premium_type,
+            "public_flags":  self.public_flags,
+            "locale":        self.locale
         }
 
     def to_json(self) -> str:
 
         data = self.data
-        data["created_at"] = self.created_at
+        data["fetched_at"] = self.fetched_at
 
         return json.dumps(data)

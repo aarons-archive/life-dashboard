@@ -14,10 +14,12 @@ class Token:
         self._scopes: list[str] = data.get("scope", "").split(" ")
         self._token_type: str = data["token_type"]
 
-        self._created_at: float = data.get("created_at", time.time())
+        self._fetched_at: float = data.get("fetched_at", time.time())
 
     def __repr__(self) -> str:
-        return "<dashboard.Token>"
+        return "<Token>"
+
+    #
 
     @property
     def access_token(self) -> str:
@@ -39,18 +41,20 @@ class Token:
     def token_type(self) -> str:
         return self._token_type
 
-    @property
-    def created_at(self) -> float:
-        return self._created_at
-
     #
 
+    @property
+    def fetched_at(self) -> float:
+        return self._fetched_at
+
     def is_expired(self) -> bool:
-        return (time.time() - self.created_at) > self.expires_in
+        return (time.time() - self.fetched_at) > self.expires_in
+
+    #
 
     def to_json(self) -> str:
 
         data = self.data
-        data["created_at"] = self.created_at
+        data["fetched_at"] = self.fetched_at
 
         return json.dumps(data)

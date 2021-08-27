@@ -3,9 +3,15 @@ import time
 from typing import Any
 
 import discord
-import discord.enums
+import pendulum
+from discord.types.guild import GuildFeature
 
 from utilities import utils
+
+
+__all__ = (
+    "Guild",
+)
 
 
 class Guild:
@@ -13,21 +19,27 @@ class Guild:
     def __init__(self, data: dict[str, Any]) -> None:
         self.data = data
 
-        self._id: int = data["id"]
+        self._id: int = int(data["id"])
         self._name: str = data["name"]
         self._icon: str | None = data["icon"]
         self._owner: bool = data["owner"]
         self._permissions: str = data["permissions"]
-        self._features: list[str] = data["features"]
+        self._features: list[GuildFeature] = data["features"]
 
-        self._created_at: float = data.get("created_at", time.time())
+        self._fetched_at: float = data.get("fetched_at", time.time())
 
     def __repr__(self) -> str:
-        return "<dashboard.Guild>"
+        return f"<Guild id={self.id} name='{self.name}'>"
+
+    #
 
     @property
     def id(self) -> int:
-        return int(self._id)
+        return self._id
+
+    @property
+    def created_at(self) -> pendulum.DateTime:
+        return utils.convert_datetime(discord.utils.snowflake_time(self.id))
 
     @property
     def name(self) -> str:
@@ -50,22 +62,26 @@ class Guild:
         return discord.Permissions(int(self._permissions))
 
     @property
-    def features(self) -> list[str]:
+    def features(self) -> list[GuildFeature]:
         return self._features
-
-    @property
-    def created_at(self) -> float:
-        return self._created_at
 
     #
 
+    @property
+    def fetched_at(self) -> float:
+        return self._fetched_at
+
     def is_expired(self) -> bool:
-        return (time.time() - self.created_at) > 20
+        return (time.time() - self.fetched_at) > 20
+
+    #
 
     def to_dict(self) -> dict[str, Any]:
 
         return {
             "id":          self.id,
+            "created_at":  utils.format_datetime(self.created_at),
+            "created_ago": utils.format_difference(self.created_at),
             "name":        self.name,
             "icon":        utils.icon(self),
             "owner":       self.owner,
@@ -76,6 +92,6 @@ class Guild:
     def to_json(self) -> str:
 
         data = self.data
-        data["created_at"] = self.created_at
+        data["fetched_at"] = self.fetched_at
 
         return json.dumps(data)
