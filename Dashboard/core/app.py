@@ -64,7 +64,7 @@ class Dashboard(aiohttp.web.Application):
             storage=redis_storage.RedisStorage(redis)
         )
 
-        self.links = await self.ipc.request("links")
+        self.links |= await self.ipc.request("links")
 
     #
 
