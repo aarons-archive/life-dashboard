@@ -85,7 +85,7 @@ if __name__ == "__main__":
 
         app = app.Dashboard()
 
-        endpoints = ["index", "login", "logout", "servers", "profile", "api.discord.callback", "api.discord.invite"]
+        endpoints = ["index", "login", "logout", "servers.servers", "servers.user", "api.discord.invite", "api.discord.login"]
         for endpoint in [importlib.import_module(f"endpoints.{endpoint}") for endpoint in endpoints]:
             endpoint.setup(app=app)  # type: ignore
 

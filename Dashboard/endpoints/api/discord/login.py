@@ -5,15 +5,15 @@ from core import config
 from core.app import Dashboard
 
 
-async def discord_callback(request: aiohttp.web.Request) -> aiohttp.web.Response:
+async def login_callback(request: aiohttp.web.Request) -> aiohttp.web.Response:
 
-    if request.query.get("error"):
-        return aiohttp.web.json_response(data={"error": "you cancelled the login prompt"}, status=400)  # TODO: Better error here.
+    if error := request.query.get("error"):
+        return aiohttp.web.Response(text=f"you cancelled the login prompt: {error}", status=400)
 
     session = await aiohttp_session.get_session(request)
 
-    if session.get("state") != request.query["state"]:
-        return aiohttp.web.json_response({'error': "state query parameter does not match."}, status=400)  # TODO: Better error here.
+    if session.get("state") != request.query.get("state"):
+        return aiohttp.web.Response(text=f"'state' query parameters do not match.", status=400)
 
     del session["state"]
 
@@ -35,13 +35,16 @@ async def discord_callback(request: aiohttp.web.Request) -> aiohttp.web.Response
     ) as response:
 
         if response.status != 200:
-            return aiohttp.web.json_response({'error': "something went wrong while authenticating with discord."}, status=400)
+            return aiohttp.web.Response(text=f"something went wrong while authenticating with discord.", status=400)
 
-        data = await response.json()
+        session["token"] = await response.json()
 
-    session["token"] = data
     return aiohttp.web.HTTPFound("/")
 
 
-def setup(app: aiohttp.web.Application):
-    app.add_routes([aiohttp.web.get(r"/api/discord/callback", discord_callback)])
+def setup(app: aiohttp.web.Application) -> None:
+    app.add_routes(
+        [
+            aiohttp.web.get(r"/api/discord/login/callback", login_callback)
+        ]
+    )

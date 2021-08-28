@@ -6,32 +6,38 @@ from core import config, values
 
 async def invite(request: aiohttp.web.Request) -> aiohttp.web.Response:
 
-    if guild_id := request.query.get("guild_id"):
-        return aiohttp.web.HTTPFound(config.redirect_uri(f"/servers/{guild_id}"))
-
-    elif request.query.get("error"):
-        return aiohttp.web.json_response(data={"error": "you cancelled the bot invite prompt"}, status=400)  # TODO: Better error here.
-
-    class GoAndFuckYourselfDpy:
+    class Snowflake:
 
         def __init__(self, id: int) -> None:
             self.id = id
+
 
     return aiohttp.web.HTTPFound(
         discord.utils.oauth_url(
             client_id=config.CLIENT_ID,
             permissions=values.PERMISSIONS,
-            guild=GoAndFuckYourselfDpy(request.match_info["guild_id"]),  # type: ignore
-            redirect_uri=config.redirect_uri("/api/discord/invite"),
+            guild=Snowflake(request.match_info["guild_id"]),  # type: ignore
+            redirect_uri=config.INVITE_REDIRECT,
             scopes=["bot", "applications.commands"],
         )
     )
 
 
-def setup(app: aiohttp.web.Application):
+async def invite_callback(request: aiohttp.web.Request) -> aiohttp.web.Response:
+
+    if guild_id := request.query.get("guild_id"):
+        return aiohttp.web.HTTPFound(config.redirect_uri(f"/servers/{guild_id}"))
+
+    elif error := request.query.get("error"):
+        return aiohttp.web.Response(text=f"you cancelled the bot invite: {error}", status=400)
+
+    return aiohttp.web.Response(text="?", status=400)
+
+
+def setup(app: aiohttp.web.Application) -> None:
     app.add_routes(
         [
             aiohttp.web.get(r"/api/discord/invite/{guild_id:\d+}", invite),
-            aiohttp.web.get(r"/api/discord/invite", invite)
+            aiohttp.web.get(r"/api/discord/invite/callback", invite_callback)
         ]
     )
