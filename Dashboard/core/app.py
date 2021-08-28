@@ -68,7 +68,11 @@ class Dashboard(aiohttp.web.Application):
 
     #
 
-    async def get_token(self, session: aiohttp_session.Session) -> objects.Token | None:
+    async def get_token(
+        self,
+        session: aiohttp_session.Session,
+        /
+    ) -> objects.Token | None:
 
         if not (data := session.get("token")):
             return None
@@ -107,7 +111,11 @@ class Dashboard(aiohttp.web.Application):
 
     #
 
-    async def fetch_user(self, session: aiohttp_session.Session) -> objects.User | None:
+    async def fetch_user(
+        self,
+        session: aiohttp_session.Session,
+        /
+    ) -> objects.User | None:
 
         if not (token := await self.get_token(session)):
             return None
@@ -119,7 +127,11 @@ class Dashboard(aiohttp.web.Application):
 
         return user
 
-    async def get_user(self, session: aiohttp_session.Session) -> objects.User | None:
+    async def get_user(
+        self,
+        session: aiohttp_session.Session,
+        /
+    ) -> objects.User | None:
 
         if not (data := session.get("user")):
             user = await self.fetch_user(session)
@@ -133,7 +145,11 @@ class Dashboard(aiohttp.web.Application):
 
     #
 
-    async def fetch_user_guilds(self, session: aiohttp_session.Session) -> list[objects.Guild] | None:
+    async def fetch_user_guilds(
+        self,
+        session: aiohttp_session.Session,
+        /
+    ) -> list[objects.Guild] | None:
 
         if not (token := await self.get_token(session)):
             return None
@@ -145,7 +161,11 @@ class Dashboard(aiohttp.web.Application):
 
         return guilds
 
-    async def get_user_guilds(self, session: aiohttp_session.Session) -> list[objects.Guild] | None:
+    async def get_user_guilds(
+        self,
+        session: aiohttp_session.Session,
+        /
+    ) -> list[objects.Guild] | None:
 
         if not (data := session.get("guilds")):
             guilds = await self.fetch_user_guilds(session)
