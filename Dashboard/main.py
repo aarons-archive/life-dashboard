@@ -85,18 +85,35 @@ if __name__ == "__main__":
 
         app = app.Dashboard()
 
-        endpoints = ["index", "login", "logout", "servers.servers", "servers.user", "api.discord.invite", "api.discord.login"]
-        for endpoint in [importlib.import_module(f"endpoints.{endpoint}") for endpoint in endpoints]:
-            endpoint.setup(app=app)  # type: ignore
+        endpoints: list[str] = [
+            "index",
+            "login",
+            "logout",
+            "servers.servers",
+            "servers.user",
+            "api.discord.invite",
+            "api.discord.login"
+        ]
+        for module in [importlib.import_module(f"endpoints.{endpoint}") for endpoint in endpoints]:
+            module.setup(app=app)
 
         app.add_routes(
-            [aiohttp.web.static("/static", os.path.abspath(os.path.join(os.path.dirname(__file__), "static")), show_index=True, follow_symlinks=True)]
+            [
+                aiohttp.web.static(
+                    prefix="/static",
+                    path=os.path.abspath(os.path.join(os.path.dirname(__file__), "static")),
+                    show_index=True,
+                    follow_symlinks=True
+                )
+            ]
         )
         app["static_root_url"] = "/static"
 
         aiohttp_jinja2.setup(
             app=app,
-            loader=jinja2.FileSystemLoader(os.path.abspath(os.path.join(os.path.dirname(__file__), "templates")))
+            loader=jinja2.FileSystemLoader(
+                searchpath=os.path.abspath(os.path.join(os.path.dirname(__file__), "templates"))
+            )
         )
 
         aiohttp.web.run_app(

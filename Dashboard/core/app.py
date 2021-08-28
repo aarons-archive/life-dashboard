@@ -14,7 +14,7 @@ from core import config, values
 from utilities import http, objects
 
 
-__log__ = logging.getLogger("dashboard")
+__log__: logging.Logger = logging.getLogger("dashboard")
 
 
 class Dashboard(aiohttp.web.Application):
