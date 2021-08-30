@@ -9,6 +9,7 @@ import aiohttp.web
 import aiohttp_session
 import aioredis
 import asyncpg
+import discord.utils
 from aiohttp_session import redis_storage
 from discord.ext import ipc
 
@@ -214,7 +215,7 @@ class Dashboard(aiohttp.web.Application):
         data["mutual_guilds"] = [guild.to_dict() for guild in guilds.values() if guild.id in mutual_guild_ids]
         data["non_mutual_guilds"] = [guild.to_dict() for guild in guilds.values() if guild.id not in mutual_guild_ids]
 
-        if guild_id and (guild := guilds.get(guild_id)):
+        if guild_id and (guild := discord.utils.get([guild for guild in guilds.values() if guild.id in mutual_guild_ids], id=guild_id)):
             data["guild"] = guild.to_dict()
 
         return data
