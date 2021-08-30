@@ -37,7 +37,7 @@
                     {% if user %}
 
                         <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light p-0 mx-3" href="#" id="NavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle text-light p-0 mx-2" href="#" id="NavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown">
                                 <img class="img-fluid rounded-circle me-2" src="{{ user.avatar }}" alt="logo" width="30px">
                                 {{ user.username }}
                             </a>
@@ -51,16 +51,17 @@
                         </div>
 
                         <div class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-light p-0 mx-3" href="#" id="NavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown">
+                            <a class="nav-link dropdown-toggle text-light p-0 mx-2" href="#" id="NavbarDropdownMenuLink" role="button" data-bs-toggle="dropdown">
                                 <img class="img-fluid rounded-circle me-2" src="{{ guild.icon or static('/images/no_image100x100.png') }}" alt="guild icon" width="30px">
-                                {{ guild.name or "Select guild" }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-2">
+                            <ul id="guildSelectorDropdown" class="dropdown-menu dropdown-menu-dark dropdown-menu-end mt-2">
                                 {% for mutual_guild in mutual_guilds %}
-                                    <li><a class="dropdown-item text-truncate" href="/servers/{{ mutual_guild.id }}">
-                                        <img class="img-fluid rounded-3 me-1" src="{{ mutual_guild.icon or static('/images/no_image100x100.png') }}" alt="logo" width="30px">
-                                        {{ mutual_guild.name }}
-                                    </a></li>
+                                    <li>
+                                        <a class="dropdown-item text-truncate" href="/servers/{{ mutual_guild.id }}">
+                                            <img class="img-fluid align-text-top d-inline-block rounded-3 me-1" src="{{ mutual_guild.icon or static('/images/no_image100x100.png') }}" alt="logo" width="30px">
+                                            {{ mutual_guild.name }}
+                                        </a>
+                                    </li>
                                 {% endfor %}
                             </ul>
                         </div>
