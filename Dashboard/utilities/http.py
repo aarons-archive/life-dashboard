@@ -42,6 +42,7 @@ MU = TypeVar("MU", bound="MaybeUnlock")
 
 
 async def json_or_text(response: aiohttp.ClientResponse) -> dict[str, Any] | str:
+
     text = await response.text(encoding="utf-8")
 
     try:
@@ -54,6 +55,7 @@ async def json_or_text(response: aiohttp.ClientResponse) -> dict[str, Any] | str
 
 
 class Route:
+
     BASE: ClassVar[str] = "https://discord.com/api/v8"
 
     def __init__(
