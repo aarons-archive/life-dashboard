@@ -95,7 +95,7 @@ if __name__ == "__main__":
             "api.discord.login"
         ]
         for module in [importlib.import_module(f"endpoints.{endpoint}") for endpoint in endpoints]:
-            module.setup(app=app)
+            module.setup(app=app)  # type: ignore
 
         app.add_routes(
             [
