@@ -19,7 +19,7 @@ from utilities import http, objects
 
 if TYPE_CHECKING:
     from typing import Any, Optional
-    from types.guild import RelatedGuilds
+    from ..types import RelatedGuilds
 
 
 __log__: logging.Logger = logging.getLogger("dashboard")
