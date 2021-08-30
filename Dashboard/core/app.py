@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import json
 import logging
-from typing import Any
+from typing import TYPE_CHECKING
 
 import aiohttp
 import aiohttp.web
@@ -12,6 +14,11 @@ from discord.ext import ipc
 
 from core import config, values
 from utilities import http, objects
+
+
+if TYPE_CHECKING:
+    from typing import Any, Optional
+    from types.guild import RelatedGuilds
 
 
 __log__: logging.Logger = logging.getLogger("dashboard")
@@ -149,15 +156,15 @@ class Dashboard(aiohttp.web.Application):
         self,
         session: aiohttp_session.Session,
         /
-    ) -> list[objects.Guild] | None:
+    ) -> dict[int, objects.Guild] | None:
 
         if not (token := await self.get_token(session)):
             return None
 
-        data = await self.http.request(http.Route("GET", "/users/@me/guilds", token=token.access_token))
-        guilds = [objects.Guild(data=guild_data) for guild_data in data]
+        guild_data = await self.http.request(http.Route("GET", "/users/@me/guilds", token=token.access_token))
 
-        session["guilds"] = [guild.to_json() for guild in guilds]
+        guilds = {int(data["id"]): objects.Guild(data) for data in guild_data}
+        session["guilds"] = [guild.to_json() for guild in guilds.values()]
 
         return guilds
 
@@ -165,14 +172,49 @@ class Dashboard(aiohttp.web.Application):
         self,
         session: aiohttp_session.Session,
         /
-    ) -> list[objects.Guild] | None:
+    ) -> dict[int, objects.Guild] | None:
 
-        if not (data := session.get("guilds")):
+        if not (guild_data := session.get("guilds")):
             guilds = await self.fetch_user_guilds(session)
 
         else:
-            guilds = [objects.Guild(data=json.loads(guild_data)) for guild_data in data]
-            if any(guild.is_expired() for guild in guilds):
+
+            guilds = {}
+            for data in guild_data:
+                guild = objects.Guild(json.loads(data))
+                guilds[guild.id] = guild
+
+            if any(guild.is_expired() for guild in guilds.values()):
                 guilds = await self.fetch_user_guilds(session)
 
         return guilds
+
+    #
+
+    async def get_related_guilds(
+        self,
+        session: aiohttp_session.Session,
+        /,
+        *,
+        user_id: int,
+        guild_id: Optional[int] = None
+    ) -> RelatedGuilds:
+
+        data: RelatedGuilds = {
+            "mutual_guilds":     None,
+            "non_mutual_guilds": None,
+            "guild":             None
+        }
+
+        if not (guilds := await self.get_user_guilds(session)):
+            return data
+
+        mutual_guild_ids = await self.ipc.request("mutual_guild_ids", user_id=user_id)
+
+        data["mutual_guilds"] = [guild.to_dict() for guild in guilds.values() if guild.id in mutual_guild_ids]
+        data["non_mutual_guilds"] = [guild.to_dict() for guild in guilds.values() if guild.id not in mutual_guild_ids]
+
+        if guild_id and (guild := guilds.get(guild_id)):
+            data["guild"] = guild.to_dict()
+
+        return data

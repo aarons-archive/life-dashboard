@@ -13,14 +13,16 @@ async def index(request: aiohttp.web.Request) -> dict[str, Any] | None:
     session = await aiohttp_session.get_session(request)
 
     app: Dashboard = request.app  # type: ignore
-    user = await app.get_user(session)
 
+    user = await app.get_user(session)
+    related_guilds = await app.get_related_guilds(session, user_id=getattr(user, "id", None))
     stats = await app.ipc.request("stats")
 
     return {
         **app.links,
-        **stats,
-        "user": user.to_dict() if user else None
+        "user": user.to_dict() if user else None,
+        **related_guilds,
+        **stats
     }
 
 

@@ -1,12 +1,18 @@
+from __future__ import annotations
+
 import json
 import time
-from typing import Any
+from typing import TYPE_CHECKING
 
 import discord
 import pendulum
-from discord.types.guild import GuildFeature
 
 from utilities import utils
+
+
+if TYPE_CHECKING:
+    from discord.types.guild import GuildFeature
+    from typing.guild import GuildDict, GuildResponse
 
 
 __all__ = (
@@ -16,7 +22,11 @@ __all__ = (
 
 class Guild:
 
-    def __init__(self, data: dict[str, Any]) -> None:
+    def __init__(
+        self,
+        data: GuildResponse,
+        /
+    ) -> None:
         self.data = data
 
         self._id: int = int(data["id"])
@@ -76,7 +86,7 @@ class Guild:
 
     #
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> GuildDict:
 
         return {
             "id":          self.id,

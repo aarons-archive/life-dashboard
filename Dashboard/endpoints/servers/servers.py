@@ -16,17 +16,12 @@ async def servers(request: aiohttp.web.Request) -> dict[str, Any] | aiohttp.web.
     if not (user := await app.get_user(session)):
         return aiohttp.web.HTTPFound("/login")
 
-    guilds = await app.get_user_guilds(session)
-    mutual_guild_ids = await app.ipc.request("mutual_guild_ids", user_id=user.id)
-
-    mutual_guilds = [guild.to_dict() for guild in guilds if guild.id in mutual_guild_ids]
-    non_mutual_guilds = [guild.to_dict() for guild in guilds if guild.id not in mutual_guild_ids]
+    related_guilds = await app.get_related_guilds(session, user_id=user.id)
 
     return {
         **app.links,
-        "user":              user.to_dict(),
-        "mutual_guilds":     mutual_guilds,
-        "non_mutual_guilds": non_mutual_guilds,
+        "user": user.to_dict(),
+        **related_guilds
     }
 
 
@@ -39,19 +34,14 @@ async def server(request: aiohttp.web.Request) -> dict[str, Any] | aiohttp.web.R
     if not (user := await app.get_user(session)):
         return aiohttp.web.HTTPFound("/login")
 
-    guilds = await app.get_user_guilds(session)
-    mutual_guild_ids = await app.ipc.request("mutual_guild_ids", user_id=user.id)
-
-    mutual_guilds = {guild.id: guild.to_dict() for guild in guilds if guild.id in mutual_guild_ids}
-
-    if not (guild := mutual_guilds.get(int(request.match_info["guild_id"]))):
+    related_guilds = await app.get_related_guilds(session, user_id=user.id, guild_id=int(request.match_info["guild_id"]))
+    if not related_guilds["guild"]:
         return aiohttp.web.Response(text=f"that server doesn't exist or you don't have access to it.", status=401)
 
     return {
         **app.links,
         "user": user.to_dict(),
-        "guild": guild,
-        "mutual_guilds": list(mutual_guilds.values())
+        **related_guilds
     }
 
 
