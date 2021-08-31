@@ -31,16 +31,21 @@ from __future__ import annotations
 import asyncio
 import datetime
 import json
+import urllib.parse
 import weakref
-from typing import Any, ClassVar, Literal, TypeVar
-from urllib.parse import quote
+from typing import TYPE_CHECKING, Any, ClassVar, Type, TypeVar
 
 # Packages
 import aiohttp
-from discord.abc import Snowflake
+import discord.abc
 
 # My stuff
 from utilities import exceptions
+
+
+if TYPE_CHECKING:
+    # My stuff
+    from typings.utilities.http import HTTPMethod, Path
 
 
 BE = TypeVar("BE", bound=BaseException)
@@ -66,25 +71,26 @@ class Route:
 
     def __init__(
         self,
-        method: Literal["GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-        path: str,
+        method: HTTPMethod,
+        path: Path,
+        /,
+        *,
         token: str,
         **parameters
     ):
 
         self.method = method
         self.path = path
-
         self.token = token
 
         url = self.BASE + self.path
         if parameters:
-            url = url.format_map({k: quote(v) if isinstance(v, str) else v for k, v in parameters.items()})
+            url = url.format_map({key: urllib.parse.quote(value) if isinstance(value, str) else value for key, value in parameters.items()})
 
         self.url: str = url
 
-        self.channel_id: Snowflake | None = parameters.get("channel_id")
-        self.guild_id: Snowflake | None = parameters.get("guild_id")
+        self.channel_id: discord.abc.Snowflake | None = parameters.get("channel_id")
+        self.guild_id: discord.abc.Snowflake | None = parameters.get("guild_id")
 
     @property
     def bucket(self) -> str:
@@ -95,10 +101,11 @@ class MaybeUnlock:
 
     def __init__(
         self,
-        lock: asyncio.Lock
+        lock: asyncio.Lock,
+        /
     ) -> None:
 
-        self.lock: asyncio.Lock = lock
+        self.lock = lock
         self._unlock: bool = True
 
     def __enter__(self: MU) -> MU:
@@ -109,7 +116,7 @@ class MaybeUnlock:
 
     def __exit__(
         self,
-        exc_type: type[BE] | None,
+        exc_type: Type[BE] | None,
         exc: BE | None,
         traceback: Any,
     ) -> None:
@@ -140,11 +147,8 @@ class HTTPClient:
     ) -> Any:
 
         bucket = route.bucket
-        method = route.method
-        url = route.url
 
-        lock = self._locks.get(bucket)
-        if lock is None:
+        if (lock := self._locks.get(bucket)) is None:
             lock = asyncio.Lock()
             if bucket is not None:
                 self._locks[bucket] = lock
@@ -162,25 +166,24 @@ class HTTPClient:
             await self._global_over.wait()
 
         await lock.acquire()
+
         with MaybeUnlock(lock) as maybe_lock:
 
             for tries in range(5):
 
                 try:
-                    async with self.session.request(method, url, **kwargs) as response:
 
+                    async with self.session.request(route.method, route.url, **kwargs) as response:
                         data = await json_or_text(response)
 
-                    remaining = response.headers.get("X-Ratelimit-Remaining")
-                    if remaining == "0" and response.status != 429:
+                    if response.headers.get("X-Ratelimit-Remaining") == "0" and response.status != 429:
 
                         reset_after: str | None = response.headers.get("X-Ratelimit-Reset-After")
 
                         if not reset_after:
                             utc = datetime.timezone.utc
-                            now = datetime.datetime.now(utc)
                             reset = datetime.datetime.fromtimestamp(float(response.headers["X-Ratelimit-Reset"]), utc)
-                            delta = (reset - now).total_seconds()
+                            delta = (reset - datetime.datetime.now(utc)).total_seconds()
                         else:
                             delta = float(reset_after)
 
@@ -197,8 +200,7 @@ class HTTPClient:
 
                         retry_after: float = data["retry_after"]
 
-                        is_global = data.get("global", False)
-                        if is_global:
+                        if is_global := data.get("global", False):
                             self._global_over.clear()
 
                         await asyncio.sleep(retry_after)
@@ -228,6 +230,7 @@ class HTTPClient:
                     raise
 
             if response is not None:
+
                 if response.status >= 500:
                     raise exceptions.DiscordServerError(response, data)
 
