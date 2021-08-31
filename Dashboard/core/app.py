@@ -188,7 +188,7 @@ class Dashboard(aiohttp.web.Application):
         if not (guilds_data := session.get("guilds")):
             return await self.fetch_user_guilds(session)
 
-        guilds: dict[int, objects.Guild] = {int(data["id"]): objects.Guild(data) for data in guilds_data}
+        guilds: dict[int, objects.Guild] | None = {int(data["id"]): objects.Guild(data) for data in guilds_data}
 
         if any(guild.is_expired() for guild in guilds.values()):
             guilds = await self.fetch_user_guilds(session)
