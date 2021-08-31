@@ -1,9 +1,16 @@
+# Future
+from __future__ import annotations
+
+# Standard Library
 from typing import TYPE_CHECKING, TypedDict
 
 
 if TYPE_CHECKING:
-    from discord.types.guild import GuildFeature
+    # Standard Library
     from typing import Optional
+
+    # Packages
+    from discord.types.guild import GuildFeature
 
 
 __all__ = (

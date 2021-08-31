@@ -1,14 +1,20 @@
+# Future
 from __future__ import annotations
 
+# Standard Library
 import datetime as dt
 from typing import TYPE_CHECKING
 
+# Packages
 import humanize
 import pendulum
 
 
 if TYPE_CHECKING:
+    # Standard Library
     from typing import Literal
+
+    # My stuff
     from utilities import objects
 
 

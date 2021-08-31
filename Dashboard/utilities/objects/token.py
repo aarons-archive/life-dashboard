@@ -1,3 +1,7 @@
+# Future
+from __future__ import annotations
+
+# Standard Library
 import json
 import time
 from typing import Any

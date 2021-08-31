@@ -1,11 +1,17 @@
+# Future
+from __future__ import annotations
+
+# Standard Library
 import json
 import time
 from typing import Any
 
+# Packages
 import discord
 import pendulum
 from discord.enums import try_enum
 
+# My stuff
 from utilities import enums, utils
 
 

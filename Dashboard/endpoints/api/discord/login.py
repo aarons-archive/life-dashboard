@@ -1,6 +1,11 @@
+# Future
+from __future__ import annotations
+
+# Packages
 import aiohttp.web
 import aiohttp_session
 
+# My stuff
 from core import config
 from core.app import Dashboard
 

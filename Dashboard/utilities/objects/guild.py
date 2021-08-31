@@ -1,18 +1,25 @@
+# Future
 from __future__ import annotations
 
+# Standard Library
 import json
 import time
 from typing import TYPE_CHECKING
 
+# Packages
 import discord
 import pendulum
 
+# My stuff
 from utilities import utils
 
 
 if TYPE_CHECKING:
-    from discord.types.guild import GuildFeature
+    # Standard Library
     from typing.guild import GuildDict, GuildResponse
+
+    # Packages
+    from discord.types.guild import GuildFeature
 
 
 __all__ = (

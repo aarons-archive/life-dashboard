@@ -24,6 +24,10 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 """
 
+# Future
+from __future__ import annotations
+
+# Standard Library
 import asyncio
 import datetime
 import json
@@ -31,9 +35,11 @@ import weakref
 from typing import Any, ClassVar, Literal, TypeVar
 from urllib.parse import quote
 
+# Packages
 import aiohttp
 from discord.abc import Snowflake
 
+# My stuff
 from utilities import exceptions
 
 

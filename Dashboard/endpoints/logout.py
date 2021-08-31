@@ -1,3 +1,7 @@
+# Future
+from __future__ import annotations
+
+# Packages
 import aiohttp.web
 import aiohttp_session
 

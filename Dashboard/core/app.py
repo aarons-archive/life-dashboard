@@ -1,9 +1,12 @@
+# Future
 from __future__ import annotations
 
+# Standard Library
 import json
 import logging
 from typing import TYPE_CHECKING
 
+# Packages
 import aiohttp
 import aiohttp.web
 import aiohttp_session
@@ -13,12 +16,16 @@ import discord.utils
 from aiohttp_session import redis_storage
 from discord.ext import ipc
 
+# My stuff
 from core import config, values
 from utilities import http, objects
 
 
 if TYPE_CHECKING:
+    # Standard Library
     from typing import Any, Optional
+
+    # My stuff
     from typings import RelatedGuilds
 
 

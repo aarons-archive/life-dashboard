@@ -1,8 +1,14 @@
+# Future
+from __future__ import annotations
+
+# Standard Library
 import secrets
 
+# Packages
 import aiohttp.web
 import aiohttp_session
 
+# My stuff
 from core import config
 
 

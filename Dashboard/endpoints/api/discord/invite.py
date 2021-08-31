@@ -1,6 +1,11 @@
+# Future
+from __future__ import annotations
+
+# Packages
 import aiohttp.web
 import discord
 
+# My stuff
 from core import config, values
 
 

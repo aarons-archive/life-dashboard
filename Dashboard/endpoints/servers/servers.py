@@ -1,9 +1,15 @@
+# Future
+from __future__ import annotations
+
+# Standard Library
 from typing import Any
 
+# Packages
 import aiohttp.web
 import aiohttp_jinja2
 import aiohttp_session
 
+# My stuff
 from core.app import Dashboard
 
 

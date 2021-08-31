@@ -1,3 +1,7 @@
+# Future
+from __future__ import annotations
+
+# Standard Library
 import asyncio
 import contextlib
 import importlib
@@ -6,11 +10,13 @@ import logging.handlers
 import os
 import sys
 
+# Packages
 import aiohttp.web
 import aiohttp_jinja2
 import jinja2
 import setproctitle
 
+# My stuff
 from core import app, config
 
 
@@ -73,6 +79,7 @@ if __name__ == "__main__":
     setproctitle.setproctitle("Dashboard")
 
     try:
+        # Packages
         import uvloop
         if sys.platform != 'win32':
             asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
