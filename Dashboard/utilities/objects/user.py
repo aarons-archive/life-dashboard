@@ -4,16 +4,19 @@ from __future__ import annotations
 # Standard Library
 import json
 import time
-from typing import Any
+from typing import TYPE_CHECKING
 
 # Packages
 import discord
 import pendulum
-from discord.enums import try_enum
 
 # My stuff
-from utilities import enums, utils
+from utilities import utils
 
+
+if TYPE_CHECKING:
+    # My stuff
+    from typings.utilities.objects.user import UserDict, UserResponse
 
 __all__ = (
     "User",
@@ -22,7 +25,7 @@ __all__ = (
 
 class User:
 
-    def __init__(self, data: dict[str, Any]) -> None:
+    def __init__(self, data: UserResponse) -> None:
         self.data = data
 
         self._id: int = int(data["id"])
@@ -131,7 +134,7 @@ class User:
 
     #
 
-    def to_dict(self) -> dict[str, Any]:
+    def to_dict(self) -> UserDict:
 
         return {
             "id":            self.id,
@@ -141,12 +144,12 @@ class User:
             "discriminator": self.discriminator,
             "avatar":        utils.avatar(self),
             "banner":        utils.banner(self),
-            "accent_colour": self.accent_colour,
+            "accent_colour": str(self.accent_colour) if self.accent_colour else None,
             "bot":           self.bot,
             "system":        self.system,
             "mfa_enabled":   self.mfa_enabled,
             "premium_type":  self.premium_type,
-            "public_flags":  self.public_flags,
+            "public_flags":  dict(self.public_flags),
             "locale":        self.locale
         }
 
