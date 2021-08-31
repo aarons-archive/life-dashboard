@@ -26,7 +26,7 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     # My stuff
-    from typings.utilities.objects.guild import RelatedGuilds
+    from typings.utilities.objects.guild import GuildResponse, RelatedGuilds
     from typings.utilities.objects.user import UserResponse
 
 
@@ -170,7 +170,7 @@ class Dashboard(aiohttp.web.Application):
         if not (token := await self.get_token(session)):
             return None
 
-        guilds_data = await self.http.request(http.Route("GET", "/users/@me/guilds", token=token.access_token))
+        guilds_data: list[GuildResponse] = await self.http.request(http.Route("GET", "/users/@me/guilds", token=token.access_token))
 
         for guild_data in guilds_data:
             guild_data["fetched_at"] = time.time()
@@ -188,7 +188,7 @@ class Dashboard(aiohttp.web.Application):
         if not (guilds_data := session.get("guilds")):
             return await self.fetch_user_guilds(session)
 
-        guilds = {int(data["id"]): objects.Guild(data) for data in guilds_data}
+        guilds: dict[int, objects.Guild] = {int(data["id"]): objects.Guild(data) for data in guilds_data}
 
         if any(guild.is_expired() for guild in guilds.values()):
             guilds = await self.fetch_user_guilds(session)
