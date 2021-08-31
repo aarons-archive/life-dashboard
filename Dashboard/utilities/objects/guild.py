@@ -15,11 +15,11 @@ from utilities import utils
 
 
 if TYPE_CHECKING:
-    # Standard Library
-    from typing.guild import GuildDict, GuildResponse
-
     # Packages
     from discord.types.guild import GuildFeature
+
+    # My stuff
+    from typings.utilities.objects.guild import GuildDict, GuildResponse
 
 
 __all__ = (

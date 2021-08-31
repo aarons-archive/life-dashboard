@@ -38,7 +38,7 @@ class GuildDict(TypedDict):
     name: str
     icon: Optional[str]
     owner: bool
-    permissions: dict[str, bool]  # TODO: Use some kind of TypedDict here.
+    permissions: dict[str, bool]
     features: list[GuildFeature]
 
 

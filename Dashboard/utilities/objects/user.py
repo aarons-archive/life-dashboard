@@ -152,10 +152,3 @@ class User:
             "public_flags":  dict(self.public_flags),
             "locale":        self.locale
         }
-
-    def to_json(self) -> str:
-
-        data = self.data
-        data["fetched_at"] = self.fetched_at
-
-        return json.dumps(data)

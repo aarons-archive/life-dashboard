@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 # Standard Library
-import json
 import logging
+import time
 from typing import TYPE_CHECKING
 
 # Packages
@@ -26,7 +26,8 @@ if TYPE_CHECKING:
     from typing import Any, Optional
 
     # My stuff
-    from typings import RelatedGuilds
+    from typings.utilities.objects.guild import RelatedGuilds
+    from typings.utilities.objects.user import UserResponse
 
 
 __log__: logging.Logger = logging.getLogger("dashboard")
@@ -135,12 +136,12 @@ class Dashboard(aiohttp.web.Application):
         if not (token := await self.get_token(session)):
             return None
 
-        data = await self.http.request(http.Route("GET", "/users/@me", token=token.access_token))
-        user = objects.User(data=data)
+        data: UserResponse = await self.http.request(http.Route("GET", "/users/@me", token=token.access_token))
+        data["fetched_at"] = time.time()
 
-        session["user"] = user.to_json()
+        session["user"] = data
 
-        return user
+        return objects.User(data)
 
     async def get_user(
         self,
@@ -149,12 +150,12 @@ class Dashboard(aiohttp.web.Application):
     ) -> objects.User | None:
 
         if not (data := session.get("user")):
-            user = await self.fetch_user(session)
+            return await self.fetch_user(session)
 
-        else:
-            user = objects.User(data=json.loads(data))
-            if user.is_expired():
-                user = await self.fetch_user(session)
+        user = objects.User(data)
+
+        if user.is_expired():
+            user = await self.fetch_user(session)
 
         return user
 
@@ -169,12 +170,14 @@ class Dashboard(aiohttp.web.Application):
         if not (token := await self.get_token(session)):
             return None
 
-        guild_data = await self.http.request(http.Route("GET", "/users/@me/guilds", token=token.access_token))
+        guilds_data = await self.http.request(http.Route("GET", "/users/@me/guilds", token=token.access_token))
 
-        guilds = {int(data["id"]): objects.Guild(data) for data in guild_data}
-        session["guilds"] = [guild.to_json() for guild in guilds.values()]
+        for guild_data in guilds_data:
+            guild_data["fetched_at"] = time.time()
 
-        return guilds
+        session["guilds"] = guilds_data
+
+        return {int(data["id"]): objects.Guild(data) for data in guilds_data}
 
     async def get_user_guilds(
         self,
@@ -182,18 +185,13 @@ class Dashboard(aiohttp.web.Application):
         /
     ) -> dict[int, objects.Guild] | None:
 
-        if not (guild_data := session.get("guilds")):
+        if not (guilds_data := session.get("guilds")):
+            return await self.fetch_user_guilds(session)
+
+        guilds = {int(data["id"]): objects.Guild(data) for data in guilds_data}
+
+        if any(guild.is_expired() for guild in guilds.values()):
             guilds = await self.fetch_user_guilds(session)
-
-        else:
-
-            guilds = {}
-            for data in guild_data:
-                guild = objects.Guild(json.loads(data))
-                guilds[guild.id] = guild
-
-            if any(guild.is_expired() for guild in guilds.values()):
-                guilds = await self.fetch_user_guilds(session)
 
         return guilds
 
