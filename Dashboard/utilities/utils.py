@@ -11,10 +11,8 @@ import pendulum
 
 
 if TYPE_CHECKING:
-    # Standard Library
-    from typing import Literal
-
     # My stuff
+    from typings.common import ImageFormat
     from utilities import objects
 
 
@@ -94,7 +92,7 @@ def avatar(
     person: objects.User,
     /,
     *,
-    format: Literal["webp", "jpeg", "jpg", "png", "gif"] | None = None,
+    format: ImageFormat | None = None,
     size: int = 512
 ) -> str:
 
@@ -105,7 +103,7 @@ def banner(
     person: objects.User,
     /,
     *,
-    format: Literal["webp", "jpeg", "jpg", "png", "gif"] | None = None,
+    format: ImageFormat | None = None,
     size: int = 512
 ) -> str | None:
 
@@ -116,7 +114,7 @@ def icon(
     guild: objects.Guild,
     /,
     *,
-    format: Literal["webp", "jpeg", "jpg", "png", "gif"] | None = None,
+    format: ImageFormat | None = None,
     size: int = 512
 ) -> str | None:
 
