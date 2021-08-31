@@ -34,10 +34,12 @@ from typing import Any
 import aiohttp
 
 
-def _flatten_error_dict(d: dict[str, Any], key: str = "") -> dict[str, str]:
+def _flatten_error_dict(error_dict: dict[str, Any], key: str = "") -> dict[str, str]:
 
     items: list[tuple[str, str]] = []
-    for k, v in d.items():
+
+    for k, v in error_dict.items():
+
         new_key = key + "." + k if key else k
 
         if isinstance(v, dict):
@@ -59,10 +61,9 @@ class DiscordException(Exception):
 
 class HTTPException(DiscordException):
 
-    def __init__(self, response: aiohttp.ClientResponse, message: str | dict[str, Any] | None):
+    def __init__(self, response: aiohttp.ClientResponse, message: str | dict[str, Any] | None) -> None:
 
         self.response = response
-        self.status: int = response.status
         self.code: int
         self.text: str
 
