@@ -2,14 +2,22 @@
 from __future__ import annotations
 
 # Standard Library
-import json
 import time
-from typing import Any
+from typing import TYPE_CHECKING
+
+
+if TYPE_CHECKING:
+    # My stuff
+    from typings.utilities.objects.token import TokenResponse
 
 
 class Token:
 
-    def __init__(self, data: dict[str, Any]) -> None:
+    def __init__(
+        self,
+        data: TokenResponse,
+        /
+    ) -> None:
         self.data = data
 
         self._access_token: str = data["access_token"]
@@ -21,7 +29,7 @@ class Token:
         self._fetched_at: float = data.get("fetched_at", time.time())
 
     def __repr__(self) -> str:
-        return "<Token>"
+        return f"<Token token_type='{self.token_type}' scopes={self.scopes} expires_in={self.expires_in}>"
 
     #
 
@@ -53,12 +61,3 @@ class Token:
 
     def is_expired(self) -> bool:
         return (time.time() - self.fetched_at) > self.expires_in
-
-    #
-
-    def to_json(self) -> str:
-
-        data = self.data
-        data["fetched_at"] = self.fetched_at
-
-        return json.dumps(data)

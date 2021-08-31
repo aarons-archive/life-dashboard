@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 # Standard Library
-import json
 import time
 from typing import TYPE_CHECKING
 
@@ -105,10 +104,3 @@ class Guild:
             "permissions": dict(self.permissions),
             "features":    self.features
         }
-
-    def to_json(self) -> str:
-
-        data = self.data
-        data["fetched_at"] = self.fetched_at
-
-        return json.dumps(data)

@@ -18,7 +18,7 @@ from discord.ext import ipc
 
 # My stuff
 from core import config, values
-from utilities import http, objects
+from utilities import exceptions, http, objects
 
 
 if TYPE_CHECKING:
@@ -93,7 +93,7 @@ class Dashboard(aiohttp.web.Application):
         if not (data := session.get("token")):
             return None
 
-        token = objects.Token(data=data)
+        token = objects.Token(data)
 
         if token.is_expired():
 
@@ -113,15 +113,15 @@ class Dashboard(aiohttp.web.Application):
             ) as response:
 
                 if response.status != 200:
-                    raise Exception  # TODO: Raise a better exception
+                    raise exceptions.HTTPException(response, message="non 200 status")
 
                 data = await response.json()
 
-            if error := data.get("error"):
-                raise Exception(error)  # TODO: Raise a better exception
+                if error := data.get("error"):
+                    raise exceptions.HTTPException(response, message=error)
 
-            token = objects.Token(data)
-            session["token"] = token.to_json()
+                session["token"] = data
+                token = objects.Token(data)
 
         return token
 

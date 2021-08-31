@@ -24,7 +24,11 @@ __all__ = (
 
 class User:
 
-    def __init__(self, data: UserResponse) -> None:
+    def __init__(
+        self,
+        data: UserResponse,
+        /
+    ) -> None:
         self.data = data
 
         self._id: int = int(data["id"])
