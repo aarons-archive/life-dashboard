@@ -215,7 +215,7 @@ class Dashboard(aiohttp.web.Application):
         if not (guilds := await self.get_user_guilds(session)):
             return data
 
-        mutual_guild_ids = await self.ipc.request("mutual_guild_ids", user_id=user_id)
+        mutual_guild_ids = (await self.ipc.request("mutual_guild_ids", user_id=user_id) or [])
 
         data["mutual_guilds"] = [guild.to_dict() for guild in guilds.values() if guild.id in mutual_guild_ids]
         data["non_mutual_guilds"] = [guild.to_dict() for guild in guilds.values() if guild.id not in mutual_guild_ids]
