@@ -10,7 +10,6 @@ import aiohttp_jinja2
 import aiohttp_session
 
 # My stuff
-from core import values
 from core.app import Dashboard
 
 
@@ -21,7 +20,7 @@ async def user(request: aiohttp.web.Request) -> dict[str, Any] | aiohttp.web.Res
     session = await aiohttp_session.get_session(request)
 
     if not (user := await app.get_user(session)):
-        return values.LOGIN_URL
+        return aiohttp.web.HTTPFound("/api/discord/login")
 
     additional_user_info = await app.ipc.request("additional_user_info", user_id=user.id)
 

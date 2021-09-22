@@ -24,7 +24,7 @@ from utilities import exceptions, http, objects
 
 if TYPE_CHECKING:
     # Standard Library
-    from typing import Any, Optional
+    from typing import Optional
 
     # My stuff
     from typings.utilities.objects.guild import GuildResponse, RelatedGuilds

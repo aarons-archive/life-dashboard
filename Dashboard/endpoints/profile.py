@@ -11,7 +11,6 @@ import aiohttp_session
 import aiospotify
 
 # My stuff
-from core import values
 from core.app import Dashboard
 
 
@@ -22,7 +21,7 @@ async def profile(request: aiohttp.web.Request) -> dict[str, Any] | aiohttp.web.
     session = await aiohttp_session.get_session(request)
 
     if not (user := await app.get_user(session)):
-        return values.LOGIN_URL
+        return aiohttp.web.HTTPFound("/api/discord/login")
 
     related_guilds = await app.get_related_guilds(session, user_id=user.id)
 

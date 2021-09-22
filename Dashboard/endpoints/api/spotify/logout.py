@@ -6,7 +6,6 @@ import aiohttp.web
 import aiohttp_session
 
 # My stuff
-from core import values
 from core.app import Dashboard
 
 
@@ -16,7 +15,7 @@ async def logout(request: aiohttp.web.Request) -> aiohttp.web.Response:
     session = await aiohttp_session.get_session(request)
 
     if not (user := await app.get_user(session)):
-        return values.ROOT_URL
+        return aiohttp.web.HTTPFound("/")
 
     await app.db.execute("UPDATE users SET spotify_refresh_token = $1 WHERE id = $2", None, user.id)
     try:
@@ -24,7 +23,7 @@ async def logout(request: aiohttp.web.Request) -> aiohttp.web.Response:
     except KeyError:
         pass
 
-    return values.ROOT_URL
+    return aiohttp.web.HTTPFound("/")
 
 
 def setup(app: aiohttp.web.Application) -> None:

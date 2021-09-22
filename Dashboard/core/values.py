@@ -27,7 +27,3 @@ INVITE_LINK = discord.utils.oauth_url(
     permissions=PERMISSIONS,
     scopes=["bot", "applications.commands"],
 )
-
-ROOT_URL = aiohttp.web.HTTPFound("/")
-PROFILE_URL = aiohttp.web.HTTPFound("/profile")
-LOGIN_URL = aiohttp.web.HTTPFound("/api/discord/login")

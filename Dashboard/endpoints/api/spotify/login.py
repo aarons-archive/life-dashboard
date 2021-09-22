@@ -71,7 +71,7 @@ async def spotify_login_callback(request: aiohttp.web.Request) -> aiohttp.web.Re
         await app.db.execute("UPDATE users SET spotify_refresh_token = $1 WHERE id = $2", data["refresh_token"], user.id)
         app.spotify_user_credentials[user.id] = aiospotify.UserCredentials(data, config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET)
 
-    return values.PROFILE_URL
+    return aiohttp.web.HTTPFound("/profile")
 
 
 def setup(app: aiohttp.web.Application) -> None:
