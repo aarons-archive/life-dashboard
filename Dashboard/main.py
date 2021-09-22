@@ -33,7 +33,7 @@ def logger():
     loggers: dict[str, logging.Logger] = {
         "dashboard": logging.getLogger("dashboard"),
         "utilities": logging.getLogger("utilities"),
-        "aiohttp":   logging.getLogger("aiohttp"),
+        #  "aiohttp":   logging.getLogger("aiohttp"),
 
     }
 
@@ -67,7 +67,7 @@ def logger():
 
     loggers["dashboard"].setLevel(logging.INFO)
     loggers["utilities"].setLevel(logging.DEBUG)
-    loggers["aiohttp"].setLevel(logging.DEBUG)
+    #  loggers["aiohttp"].setLevel(logging.DEBUG)
 
     try:
         yield
