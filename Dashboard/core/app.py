@@ -39,23 +39,30 @@ class Dashboard(aiohttp.web.Application):
     def __init__(self) -> None:
         super().__init__()
 
-        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
-
         self.db: asyncpg.Pool | None = None
         self.redis: aioredis.Redis | None = None
 
-        self.ipc: ipc.Client = ipc.Client(secret_key=config.SECRET_KEY, multicast_port=config.MULTICAST_PORT)
-        self.http: http.HTTPClient = http.HTTPClient(session=self.session)
+        self.session: aiohttp.ClientSession = aiohttp.ClientSession()
 
-        self.spotify: aiospotify.Client = aiospotify.Client(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, session=self.session)
+        self.ipc = ipc.Client(
+            secret_key=config.SECRET_KEY,
+            multicast_port=config.MULTICAST_PORT
+        )
+        self.http = http.HTTPClient(
+            session=self.session
+        )
+        self.spotify = aiospotify.Client(
+            client_id=config.SPOTIFY_CLIENT_ID,
+            client_secret=config.SPOTIFY_CLIENT_SECRET,
+            session=self.session
+        )
 
-        self.on_startup.append(self.start)
-
-        self.links: dict[str, Any] = {
+        self.links = {
             "invite_link": values.INVITE_LINK
         }
-
         self.spotify_user_credentials = {}
+
+        self.on_startup.append(self.start)
 
     async def start(self, _) -> None:
 
@@ -105,11 +112,13 @@ class Dashboard(aiohttp.web.Application):
             async with self.session.post(
                     url="https://discord.com/api/oauth2/token",
                     data={
+                        "client_id": config.CLIENT_ID,
                         "client_secret": config.CLIENT_SECRET,
-                        "client_id":     config.CLIENT_ID,
-                        "redirect_uri":  config.LOGIN_REDIRECT,
+
+                        "grant_type": "refresh_token",
                         "refresh_token": token.refresh_token,
-                        "grant_type":    "refresh_token",
+                        "redirect_uri":  config.LOGIN_REDIRECT,
+
                         "scope":         "identify guilds",
                     },
                     headers={
@@ -129,6 +138,32 @@ class Dashboard(aiohttp.web.Application):
                 token = objects.Token(data)
 
         return token
+
+    async def get_spotify_credentials(
+        self,
+        session: aiohttp_session.Session,
+        /,
+    ) -> aiospotify.UserCredentials | None:
+
+        if not (user := await self.get_user(session)):
+            return None
+
+        credentials = self.spotify_user_credentials.get(user.id)
+
+        if not credentials:
+
+            record = await self.db.fetchrow("SELECT spotify_refresh_token FROM users WHERE id = $1", user.id)
+            if not (refresh_token := record["spotify_refresh_token"]):
+                return None
+
+            credentials = self.spotify_user_credentials[user.id] = await aiospotify.UserCredentials.from_refresh_token(
+                client_id=config.SPOTIFY_CLIENT_ID,
+                client_secret=config.SPOTIFY_CLIENT_SECRET,
+                session=self.session,
+                refresh_token=refresh_token
+            )
+
+        return credentials
 
     #
 
@@ -229,30 +264,3 @@ class Dashboard(aiohttp.web.Application):
             data["guild"] = guild.to_dict()
 
         return data
-
-    #
-
-    async def get_spotify_credentials(
-        self,
-        session: aiohttp_session.Session,
-        /,
-    ) -> aiospotify.UserCredentials | None:
-
-        if not (user := await self.get_user(session)):
-            return None
-
-        if not (credentials := self.spotify_user_credentials.get(user.id)):
-
-            record = await self.db.fetchrow("SELECT spotify_refresh_token FROM users WHERE id = $1", user.id)
-
-            if (refresh_token := record["spotify_refresh_token"]) is None:
-                return None
-
-            credentials = self.spotify_user_credentials[user.id] = await aiospotify.UserCredentials.from_refresh_token(
-                config.SPOTIFY_CLIENT_ID,
-                config.SPOTIFY_CLIENT_SECRET,
-                session=self.session,
-                refresh_token=refresh_token
-            )
-
-        return credentials
