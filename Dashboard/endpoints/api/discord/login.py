@@ -60,7 +60,7 @@ async def login_callback(request: aiohttp.web.Request) -> aiohttp.web.Response:
     ) as response:
 
         if response.status != 200:
-            return aiohttp.web.Response(text="something went wrong while authenticating with discord.", status=400)
+            return aiohttp.web.Response(text="something went wrong while requesting discord access token.", status=400)
 
         session["token"] = await response.json()
 

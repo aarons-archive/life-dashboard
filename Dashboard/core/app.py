@@ -127,7 +127,7 @@ class Dashboard(aiohttp.web.Application):
             ) as response:
 
                 if response.status != 200:
-                    raise exceptions.HTTPException(response, message="non 200 status")
+                    raise exceptions.HTTPException(response, message="something went wrong while requesting refreshed discord access token.")
 
                 data = await response.json()
 
