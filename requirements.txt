@@ -11,3 +11,4 @@ setproctitle==1.2.2
 setuptools==58.1.0
 wheel==0.37.0
 Jinja2==3.0.1
+https://github.com/Axelancerr/aiospotify/archive/main.zip
