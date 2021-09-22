@@ -64,7 +64,7 @@ async def spotify_login_callback(request: aiohttp.web.Request) -> aiohttp.web.Re
     ) as response:
 
         if response.status != 200:
-            return aiohttp.web.Response(text="something went wrong while authenticating with spotify.", status=400)
+            return aiohttp.web.Response(text="something went wrong while requesting spotify access token.", status=400)
 
         data = await response.json()
 

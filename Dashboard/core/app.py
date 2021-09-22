@@ -163,6 +163,9 @@ class Dashboard(aiohttp.web.Application):
                 refresh_token=refresh_token
             )
 
+        if credentials.is_expired():
+            await credentials.refresh(session=self.session)
+
         return credentials
 
     #
