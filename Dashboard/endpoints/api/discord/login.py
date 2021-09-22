@@ -9,7 +9,7 @@ import aiohttp.web
 import aiohttp_session
 
 # My stuff
-from core import confif
+from core import config
 from core.app import Dashboard
 
 

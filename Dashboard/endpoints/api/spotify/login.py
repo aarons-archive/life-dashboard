@@ -10,7 +10,7 @@ import aiohttp_session
 import aiospotify
 
 # My stuff
-from core import config, values
+from core import config
 from core.app import Dashboard
 
 
