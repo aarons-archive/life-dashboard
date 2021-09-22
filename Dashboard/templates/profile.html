@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Life - {{ user.username }}{% endblock title %}
+{% block description %}Profile for {{ user.username }}{% endblock description %}
+
+{% block inner_content %}
+
+<div class="container">
+
+    <div class="container p-5 text-center">
+        <div class="row">
+            {% if not data %}
+            <div class="col-12">
+                <a class="btn btn-lg btn-light fw-bold" role="button" href="/api/spotify/login">Login with spotify</a>
+            </div>
+            {% else %}
+            <div class="col-12">
+                <h3 class="pt-5 m-0">{{ data }}</h3>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock inner_content %}

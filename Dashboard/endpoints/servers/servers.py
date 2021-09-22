@@ -10,6 +10,7 @@ import aiohttp_jinja2
 import aiohttp_session
 
 # My stuff
+from core import values
 from core.app import Dashboard
 
 
@@ -20,7 +21,7 @@ async def servers(request: aiohttp.web.Request) -> dict[str, Any] | aiohttp.web.
     session = await aiohttp_session.get_session(request)
 
     if not (user := await app.get_user(session)):
-        return aiohttp.web.HTTPFound("/login")
+        return values.LOGIN_URL
 
     related_guilds = await app.get_related_guilds(session, user_id=user.id)
 
@@ -38,11 +39,11 @@ async def server(request: aiohttp.web.Request) -> dict[str, Any] | aiohttp.web.R
     session = await aiohttp_session.get_session(request)
 
     if not (user := await app.get_user(session)):
-        return aiohttp.web.HTTPFound("/login")
+        return values.LOGIN_URL
 
     related_guilds = await app.get_related_guilds(session, user_id=user.id, guild_id=int(request.match_info["guild_id"]))
     if not related_guilds["guild"]:
-        return aiohttp.web.Response(text=f"that server doesn't exist or you don't have access to it.", status=401)
+        return aiohttp.web.Response(text="that server doesn't exist or you don't have access to it.", status=401)
 
     return {
         **app.links,

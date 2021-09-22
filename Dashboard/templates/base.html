@@ -46,7 +46,7 @@
                                 <li><a class="dropdown-item" href="/profile">Profile</a></li>
                                 <li><a class="dropdown-item" href="/servers">Servers</a></li>
                                 <li><hr class="dropdown-divider my-1"></li>
-                                <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
+                                <li><a class="dropdown-item text-danger" href="/api/discord/logout">Logout</a></li>
                             </ul>
                         </div>
 
@@ -68,7 +68,7 @@
 
                     {% else %}
                         <form>
-                            <button class="btn btn-light" type="submit" formaction="/login">Login</button>
+                            <button class="btn btn-light" type="submit" formaction="/api/discord/login">Login</button>
                         </form>
                     {% endif %}
 

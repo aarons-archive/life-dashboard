@@ -5,14 +5,21 @@ from __future__ import annotations
 import aiohttp.web
 import aiohttp_session
 
+# My stuff
+from core import values
+
 
 async def logout(request: aiohttp.web.Request) -> aiohttp.web.Response:
 
     session = await aiohttp_session.get_session(request)
     session.invalidate()
 
-    return aiohttp.web.HTTPFound("/")
+    return values.ROOT_URL
 
 
 def setup(app: aiohttp.web.Application) -> None:
-    app.add_routes([aiohttp.web.get(r"/logout", logout)])  # type: ignore
+    app.add_routes(
+        [
+            aiohttp.web.get(r"/api/discord/logout", logout)
+        ]
+    )

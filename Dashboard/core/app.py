@@ -11,6 +11,7 @@ import aiohttp
 import aiohttp.web
 import aiohttp_session
 import aioredis
+import aiospotify
 import asyncpg
 import discord.utils
 from aiohttp_session import redis_storage
@@ -46,11 +47,15 @@ class Dashboard(aiohttp.web.Application):
         self.ipc: ipc.Client = ipc.Client(secret_key=config.SECRET_KEY, multicast_port=config.MULTICAST_PORT)
         self.http: http.HTTPClient = http.HTTPClient(session=self.session)
 
+        self.spotify: aiospotify.Client = aiospotify.Client(config.SPOTIFY_CLIENT_ID, config.SPOTIFY_CLIENT_SECRET, session=self.session)
+
         self.on_startup.append(self.start)
 
         self.links: dict[str, Any] = {
             "invite_link": values.INVITE_LINK
         }
+
+        self.spotify_user_credentials = {}
 
     async def start(self, _) -> None:
 
@@ -224,3 +229,30 @@ class Dashboard(aiohttp.web.Application):
             data["guild"] = guild.to_dict()
 
         return data
+
+    #
+
+    async def get_spotify_credentials(
+        self,
+        session: aiohttp_session.Session,
+        /,
+    ) -> aiospotify.UserCredentials | None:
+
+        if not (user := await self.get_user(session)):
+            return None
+
+        if not (credentials := self.spotify_user_credentials.get(user.id)):
+
+            record = await self.db.fetchrow("SELECT spotify_refresh_token FROM users WHERE id = $1", user.id)
+
+            if (refresh_token := record["spotify_refresh_token"]) is None:
+                return None
+
+            credentials = self.spotify_user_credentials[user.id] = await aiospotify.UserCredentials.from_refresh_token(
+                config.SPOTIFY_CLIENT_ID,
+                config.SPOTIFY_CLIENT_SECRET,
+                session=self.session,
+                refresh_token=refresh_token
+            )
+
+        return credentials

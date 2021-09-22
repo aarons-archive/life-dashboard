@@ -95,12 +95,14 @@ if __name__ == "__main__":
 
         endpoints: list[str] = [
             "index",
-            "login",
-            "logout",
             "servers.servers",
             "servers.user",
             "api.discord.invite",
-            "api.discord.login"
+            "api.discord.login",
+            "api.discord.logout",
+            "api.spotify.login",
+            "api.spotify.logout",
+            "profile"
         ]
         for module in [importlib.import_module(f"endpoints.{endpoint}") for endpoint in endpoints]:
             module.setup(app=app)  # type: ignore
