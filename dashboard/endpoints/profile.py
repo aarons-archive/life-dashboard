@@ -28,7 +28,7 @@ async def profile(request: aiohttp.web.Request) -> dict[str, Any] | aiohttp.web.
     if not (credentials := await app.get_spotify_credentials(session)):
         data = {}
     else:
-        data = await app.spotify.http.get_current_users_top_artists(time_range=aiospotify.TimeRange.SHORT_TERM, limit=1, offset=0, credentials=credentials)
+        data = await app.spotify.get_current_user_playlists(credentials=credentials)
 
     return {
         **app.links,

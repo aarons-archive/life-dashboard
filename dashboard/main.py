@@ -77,7 +77,7 @@ def logger():
 
 if __name__ == "__main__":
 
-    setproctitle.setproctitle("Dashboard")
+    setproctitle.setproctitle("dashboard")
 
     try:
         # Packages
