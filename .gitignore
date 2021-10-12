@@ -1,10 +1,11 @@
 *.pyc
-*.ini
 *.log*
 
-.idea/
-venv/
 node_modules/
+resources/
 static/
+venv/
+build/
+.idea/
 
 config.py
