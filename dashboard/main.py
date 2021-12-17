@@ -28,7 +28,7 @@ BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE = (f"\u001b[{30 + i}m" for
 
 
 @contextlib.contextmanager
-def logger():
+def logger() -> Any:
 
     loggers: dict[str, logging.Logger] = {
         "dashboard": logging.getLogger("dashboard"),
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     try:
         # Packages
         import uvloop
-        if sys.platform != 'win32':
+        if sys.platform != "win32":
             asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
     except ImportError:
         uvloop = None

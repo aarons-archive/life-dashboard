@@ -59,7 +59,7 @@ module.exports = (env, options) => {
                 patterns: [
                     {
                         from: 'resources/',
-                        to:   '../',
+                        to:   '../images',
                     },
                 ],
             }),

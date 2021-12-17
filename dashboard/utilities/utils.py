@@ -11,6 +11,7 @@ import pendulum
 
 
 if TYPE_CHECKING:
+
     # My stuff
     from typings.common import ImageFormat
     from utilities import objects
